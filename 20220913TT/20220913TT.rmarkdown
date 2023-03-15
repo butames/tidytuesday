@@ -1,0 +1,168 @@
+---
+title: "TidyTuesday - September 13, 2022"
+author: "Seyram A. Butame"
+format: html
+editor: visual
+bibliography: references.bib
+---
+
+
+This creation marks the start of my TidyTuesday journey. I have seen DataViz wizards post their results, and I have looked on with some envy and a desire to do the same. So, I am going to start practicing. I started with September 13, 2022, because I saw one viz created by \@ryanahart on Twitter (or **curatedmess** on Github) which shows data in the form of an image[@hart_tidytuesday_2022].
+
+My goal is to create something like the below image generated from curatedmess's code.
+
+![*Fig 01 - Bigfoot data graphic created by \@ryanahart*](images/bigfoot_13092022.png){fig-align="center"}
+
+## Bigfoot
+
+https://thebioengineer.github.io/tidytuesdayR/
+
+https://github.com/rfordatascience/tidytuesday/tree/master/data/2022/2022-09-13
+
+For the Week of 2022-08-13, the data came from Bigfoot Field Researchers Organization (BRFO) by way of [data.world](https://data.world/timothyrenner/bfro-sightings-data)
+
+## Necessary packages
+
+To create the vizualizaiton, we will be using the following packages: - tidytuesdayR - Used to pull the specified week's data - Tidyverse (specifically dplyr) - showtext - ggtext
+
+I've never had the fortunte of using *showtext* or *ggtext* before, so this was certainly a great learning experience.
+
+
+```{r, packages, message=FALSE, warnings=FALSE}
+library(tidytuesdayR)
+library(tidyverse)
+library(readr)
+library(showtext)
+library(ggtext)
+```
+
+
+## Pull Data from DataWorld
+
+The simplest was to pull data is to make use of the `tt_load` function within `the`tidytuesdayR\` library. It is a function that accepts two typews of inputs to determine which data to grab. You are free to use it as dta as string (i.e., YYYY-MM-DD format) or it can also accept the year as the first argument and the subsequent week of the year as the second[@hughes_access_2019].
+
+-   Method 01
+
+> `tt_data <- tt_load("2019-01-15")`
+
+-   Method 02
+
+> `tt_data <- tt_load(2019, week=3)`
+
+Keep in mind that this process will pull all the data available for that week. You can examine the contents of the data pull using the following:
+
+    tt_data$agencies
+    tt_data[["agencies"]]
+
+Alternatively you can examine the data's ReadMe file and a list of the individual data files using the following command:
+
+    readme(tt_data)
+    print(tt_data)
+
+In this case we are using data from 2022-09-13
+
+
+```{r, data_pull}
+# tt_data <- tt_load("2022-09-13")
+# 
+# readme(tt_data)
+# 
+# print(tt_data)
+```
+
+
+## Add Fonts
+
+
+```{r, fonts}
+
+font_add_google(name = "Bitter", family = "Bitter")
+font_add_google(name = "Open Sans", family = "Open Sans")
+
+```
+
+
+## Turn on showtext
+
+
+```{r, showtext}
+showtext_auto()
+
+font <- "Bitter"
+font2 <- "Open Sans"
+
+```
+
+
+## Load Data
+
+
+```{r, data_load, message}
+
+# bigfoot <- "bigfoot.csv"
+
+bigfoot <- read_csv("bfro_reports_geocoded.csv")
+```
+
+
+## Create Coordinates for Image
+
+
+```{r, xypoints}
+
+pic_points <- readr::read_csv("bigfoot_points.csv")
+
+```
+
+
+## Data Wrangle
+
+
+```{r, data_wrangle}
+bigfoot_df <- bigfoot %>%
+  filter(!season == "Unknown") %>%
+  select(season, state, number) %>%
+  arrange(season)
+
+df <- merge(bigfoot_df, pic_points, by = 0, all = TRUE)[-1]
+
+```
+
+
+## Create Plot
+
+
+```{r}
+
+p1 <- ggplot(data =df, aes(x = x, y = y))
+p1 <- p1 + geom_point(aes(color = ifelse(season == "Winter", "Winter", "Other Seasons")), size = 0.1)
+p1 <- p1 + coord_flip()
+p1 <- p1 + scale_x_continuous(expand = c(0, 0), limits = c(NA, 1.5))
+p1 <- p1 + scale_color_manual(values = c("#BCAAA4", "#448AFF"))
+p1 <- p1 + annotate(geom = "text", y = 0.85, x = 0.9, label = "BIGFOOT", hjust = "left", family = font, fontface = "bold", size = 10, color = "#000000")
+p1 <- p1 + annotate(geom = "richtext", y = 0.74, x = 0.89, label = "<span style='color: #448AFF;'><b>Winter</b></span> accounts for the least<br>number of bigfoot sightings<br>in the U.S. at 15% of the total.", hjust = "left", family = font2, size = 3, color = "#000000", fill = NA, label.color = NA)
+p1 <- p1 + annotate(geom = "text", y = 0.25, x = 1, label = "Each point represents one of the 4,929\nbigfoot sightings with season level detail.", hjust = "left", family = font2, size = 2, color = "#000000")
+p1 <- p1 + annotate(geom = "curve", x = 1, y = 0.29, xend = 0.90, yend = 0.32,curvature = 0.25, size = 0.3,  arrow = arrow(length = unit(1.5, "mm")), color = "#000000")
+p1 <- p1 + theme_void()
+p1 <- p1 + theme(plot.caption = element_text(hjust = 0.5, size = 7, family = font2, color = "#000000"),
+        legend.position = "none",
+        legend.title = element_blank(),
+        plot.margin = unit(c(1.75, 1.75, 1.75, 1.75), "cm"),
+        plot.background = element_rect(color = "#F2F2F2", fill = "#F2F2F2"))
+
+p1
+```
+
+
+
+## Print Image
+
+
+```{r}
+
+ggsave(paste0("bigfoot_", format(Sys.time(), "%d%m%Y"), ".png"), dpi = 320, width = 6, height = 6)
+```
+
+
+# References
+

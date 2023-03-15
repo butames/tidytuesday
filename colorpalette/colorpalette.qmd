@@ -1,0 +1,152 @@
+---
+title: "Setting Color Palette"
+author: "Seyram A. Butame"
+format: 
+  html:
+    toc: true
+    toc-depth: 2
+    toc-title: Contents
+    toc-location: right
+    citations-hover: true
+    theme: lumen
+    mainfont: sans-serif
+  
+bibliography: https://api.citedrive.com/bib/94ea4ce6-0d99-4cf2-9f69-7ac984099349/references.bib?x=eyJpZCI6ICI5NGVhNGNlNi0wZDk5LTRjZjItOWY2OS03YWM5ODQwOTkzNDkiLCAidXNlciI6ICIxOTAyIiwgInNpZ25hdHVyZSI6ICI1YjQyYWJhMGJjN2EwZDRkZGJhNjJjNjAyNTVlODljYzNmMWYyOTYyODMzN2E0YWViYzViYTExNGU5NjYzZTUxIn0=/bibliography.bib
+csl: plosone.csl
+---
+
+# Introduction
+
+This is an instructional on creating a palette to use with the `ggplot2` package. This instructional is based on a tutorial from [**R For The Rest of US**](https://rfortherestofus.com) [@Keyes_2023]. I have long stressed about using color palettes for my work. I have tried various combination packages like `ColorBrewer` and defining my own colors. And `ColorBrewer` in particular is very helpful. However, it can be a bit tedious especially, when you've got long codes of `ggplot` texts.
+
+Step 1: Load `tidyverse`
+Step 2: Define the colors
+Step 3: Create the color scale (using `function()`)
+Step 4: You can then add the function to the bottom of your ggplot and it will be added.
+
+
+
+{{< video https://youtu.be/1WoBs5jFY1M >}}
+
+
+## Library
+
+We complete this task using the `tidyverse` suite of packages.
+
+```{r, library, warning=FALSE, message=FALSE}
+
+library(tidyverse)
+library(palmerpenguins) ## An internal data package in R.
+
+
+```
+
+
+
+## Define Colors
+
+```{r, colors, warning=FALSE, message=FALSE}
+
+ga_purple <- "#8359AB"
+ga_yellow <- "#FFDE39"
+ga_gray <- "#827C78"
+ga_blue <- "#49B8F1"
+ga_brown <- "#B88262"
+ga_pink <- "#DC458E"
+  
+```
+
+
+::: {.panel-tabset}
+
+## Qualitative
+
+This is a palette suited to categorical data. The scale is defined in combination with the `scale_color_manual()` function. This is a function, withing the `ggplot2` package that allows you to *specify your own set of mappings from levels in the data to aesthetic values*.
+
+
+```{r, qualpal, message=FALSE, warning=FALSE}
+
+
+qualpal <- function() {
+  scale_color_manual(values = c(ga_blue, 
+                                ga_pink, 
+                                ga_yellow, 
+                                ga_purple, 
+                                ga_gray, 
+                                ga_brown))
+  
+}
+
+
+## Example Using Penguins Data
+
+p1 <- penguins %>%
+  ggplot() +
+  geom_point(aes(x = bill_length_mm,
+                 y = flipper_length_mm,
+                 color = island)) +
+  labs(title = "Palmer Penguins",
+       subtitle = "Look at them go!",
+       x = "Bill length",
+       y = "Flipper length") +
+  theme_minimal()
+
+p1
+```
+
+From the above which applys the minimalist theme from ggplot a standard scatter plot using the Palmer Penguins data, we can see a default color choice.
+
+However when we apply the qualiative palette we generated, saved as the object **qualpal**, we get the below.
+
+```{r, qualpal2, warning=FALSE, message=FALSE}
+
+p2 <- p1 + qualpal()
+
+p2
+
+```
+
+
+## Sequential
+
+This is a palette suited to sequential data
+
+```{r, seqpal, message=FALSE, warning=FALSE}
+
+scale_fill_ga_sequential <- function(low_color = ga_yellow,
+                                     high_color = ga_purple) {
+  scale_fill_gradient(low = low_color,
+                      high = high_color)
+}
+
+## Example Using Penguins Data
+
+
+
+  
+
+```
+
+
+## Diverging
+
+This is a palette suited for data that goes from low to high with a midpoint.
+
+```{r, divpal, warning=FALSE, message=FALSE}
+
+scale_fill_ga_diverging <- function(low_color = ga_yellow,
+                                    medium_color = "white",
+                                    high_color = ga_pink){
+  
+  scale_fill_gradient2(low = low_color,
+                       mid = medium_color,
+                       high = high_color)
+}
+
+## Example Using Penguins Data
+
+```
+
+
+:::
+
