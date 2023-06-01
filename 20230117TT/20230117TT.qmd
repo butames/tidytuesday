@@ -1,0 +1,345 @@
+---
+title: "Alone Survivalist TV Show"
+subtitle: "Tidy Tuesday 2023 Week 04 (01/17 -01/23)"
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+author: "Seyram A. Butame"
+format: 
+  html:
+    toc: true
+    code-overflow: wrap
+    css: styles.css
+  pdf: default
+bibliography: https://api.citedrive.com/bib/94ea4ce6-0d99-4cf2-9f69-7ac984099349/references.bib?x=eyJpZCI6ICI5NGVhNGNlNi0wZDk5LTRjZjItOWY2OS03YWM5ODQwOTkzNDkiLCAidXNlciI6ICIxOTAyIiwgInNpZ25hdHVyZSI6ICI1YjQyYWJhMGJjN2EwZDRkZGJhNjJjNjAyNTVlODljYzNmMWYyOTYyODMzN2E0YWViYzViYTExNGU5NjYzZTUxIn0=/bibliography.bib
+editor: source
+---
+
+<img src="img/alone_logo.jpg" title="Alone (TV Series)" alt="Alone TV Series Logo">
+
+> Alone is an American survival competition series on History. It follows the self-documented daily struggles of 10 individuals (seven paired teams in season 4) as they survive alone in the wilderness for as long as possible using a limited amount of survival equipment.[^1] 
+
+The TidyTuesday data is courtesy of the Alone data package by Dan Oehm[^2]. The package contains four data sets[^3].
+1.    `survivalists.csv`: A data frame of survivalists across all 9 seasons detailing name and demographics, location and profession, result, days lasted, reasons for tapping out (detailed and categorized), and page URL.
+2.    `loadouts.csv`: The rules allow each survivalist to take 10 items with them. This dataset includes information on each survivalist’s loadout. It has detailed item descriptions and a simplified version for easier aggregation and analysis
+3.   ` episodes.csv`: This dataset contains details of each episode including the title, number of viewers, beginning quote, and IMDb rating. New episodes are added at the end of future seasons.
+4   `seasons.csv`: The season summary dataset includes location, latitude and longitude, and other season-level information. It includes the date of drop-off where the information exists.
+
+I am using the following packages: tidytuesdaR[@hughes2019-st], tidyverse, ggpubr, circlize, cowplot,RColorBrewer, and camcorder.
+
+```{r, library, warning=FALSE, messsage=FALSE}
+library(tidytuesdayR)
+library(tidyverse)
+library(ggpubr)
+library(circlize)
+library(cowplot)
+library(RColorBrewer)
+library(camcorder)
+#source("R/circos.R")
+```
+
+## Importing Data
+
+```{r, data, warning=FALSE, message=FALSE}
+
+# tt_data <- tt_load(2023, week = 4)
+# 
+# survivalists <- tt_data$survivalists %>%
+#   as_tibble() %>%
+#   write_csv(path = "data/survivalist.csv")
+# 
+# loadouts <- tt_data$loadouts %>%
+#   as_tibble() %>%
+#   write_csv(path = "data/loadouts.csv")
+# 
+# episodes <- tt_data$episodes %>%
+#   as_tibble() %>%
+#   write_csv(path = "data/episodes.csv")
+
+# seasons <- tt_data$seasons %>%
+#   as_tibble() %>%
+#   write_csv(path = "data/seasons.csv")
+
+
+## If the above method fails, you can read in the data as follows via csv files using the `readr` package in tidyverse.
+
+survivalists <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-01-24/survivalists.csv')  %>%
+  write_csv(path = "data/loadouts.csv")
+
+loadouts <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-01-24/loadouts.csv')  %>%
+  write_csv(path = "data/loadouts.csv")
+
+episodes <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-01-24/episodes.csv')  %>%
+  write_csv(path = "data/episodes.csv")
+
+seasons <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-01-24/seasons.csv')  %>%
+  write_csv(path = "data/seasons.csv")
+```
+
+```{r}
+item <- left_join(
+  survivalists,
+  loadouts,
+  by = c("season", "name")) %>%
+  distinct()
+
+item_count <- item %>%
+  count(item)
+
+```
+
+
+
+```{r}
+p1 <- item_count %>%
+  ggdotchart(x = "item", y = "n", color = "#93DECA", sorting = "descending", rotate = T, add = "segments", dot.size = 8, label = round(item_count$n), font.label = list(color = "#284450", size = 10, vjust = 0.5), ggtheme = theme_void()) + 
+  xlab("") + ylab("") +
+  ggtitle(" ") +
+  theme(
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.text.y = element_text(colour = "#fff"),
+    axis.title.y = element_text(),
+    plot.title = element_text(colour = "#fff", hjust = 0.5)
+    )
+```
+
+
+```{r, message=FALSE}
+item_n <- item %>%
+  group_by(season, item) %>%
+  summarise(n_item = sum(item_number))
+
+item_wider <- item_n %>%
+  pivot_wider(names_from = item, values_from = n_item) %>%
+  mutate(across(everything(), ~replace_na(.x, 0)))
+
+item_matrix <-  item_wider %>%
+  column_to_rownames("season") %>%
+  as.matrix()
+```
+
+
+```{r, warning=FALSE, message=FALSE}
+## Create colour palette for the chord diagram
+cb_palette <- brewer.pal(9, "RdBu") ## colour blind friendly
+
+## create structure to assign to each season a specific color based on the
+## items.
+role_colour <- structure(cb_palette, names = item_wider$season)
+colnames(item_wider[2:28])
+item_wider_colour <- structure(rep("#F7F7F7",
+                                            length(colnames(item_wider[2:28]))),
+                               names = colnames(item_wider[2:28]))
+```
+
+
+```{r}
+p2 <- ~circos_function(item_matrix, "", col_grid)
+
+```
+
+
+```{r}
+
+title_gg <- ggplot() +
+  labs(title = "Which item do I need? A pot or a soap?",
+       subtitle = "The participants of Alone, the survival TV show, were allowed to bring with them 10 items. The most popular across all the seasons was a pot.") +
+  theme(
+    plot.title = element_text(size = 24, colour = "white",
+                              hjust = 0.5,
+                              face = "bold"),
+    plot.subtitle = element_text(size = 16, colour = "white", hjust = 0.5),
+    plot.background = element_rect(fill = alpha("#284450", 0.8),
+                                   colour = alpha("#284450", 0.8)),
+    plot.margin = margin(18, 0, 12, 0)
+  )
+
+```
+
+
+```{r}
+subtitle_gg <- ggplot() +
+  labs(caption = "Source: TV series Alone, Design: Rita Giordano") +
+  theme(
+    plot.caption = element_text(size = 10, colour = "white",
+                                hjust = 0.85,
+                                face = "bold"),
+    plot.background = element_rect(fill = alpha("#284450", 0.8),
+                                   colour = alpha("#284450", 0.8))
+    #plot.margin = margin(18, 0, 12, 0)
+  )
+```
+
+
+```{r}
+plot_row <- plot_grid(p1,
+                      p2,
+                      labels = c("Favourite items across all seasons",
+                                 "Items per each season"),
+                      ncol = 2,
+                      label_colour = "white",
+                      label_size = 14,
+                      hjust = 0,
+                      label_x = 0.31,
+                      #align = 'v',
+                      rel_widths = c(0.2, 0.3),
+                      rel_heights = c(0.01, 0.001)
+) +
+  theme(plot.margin = margin(14, 3, 4, 8))
+subtitle_cow <- add_sub(plot_row,
+                        "Source: Alone, Design: Rita Giordano",
+                        fontface = "bold",
+                        size = 10,
+                        color = "white",
+                        hjust = -1.2)
+```
+
+
+```{r}
+p3 <- plot_grid(title_gg,
+          ggdraw(subtitle_cow),
+          ncol = 1, rel_heights = c(0.1, 1)) +
+  theme(plot.background = element_rect(fill = alpha("#284450", 1)))
+
+```
+
+```{r}
+p3
+```
+
+
+
+
+```{r, plots, warning=FALSE, message=FALSE}
+
+# Items data set
+
+# item <- left_join(
+#   survivalists,
+#   loadouts,
+#   by = c("season", "name")) %>%
+#   distinct()
+# 
+# item_count <- item %>%
+#   count(item)
+# 
+# 
+# ## Cleveland dot plot/ dot chart using `ggpubr`.
+# 
+# ### Create the 
+# gg_record(
+#   dir = "img/recording",
+#   device = "png",
+#   width = 15,      # width of saved image
+#   height = 8,     # height of saved image
+#   units = "in",   # units for width and height
+#   dpi = 300       # dpi to use when saving image
+# )
+# 
+# p1 <- item_count %>%
+#   ggdotchart(x = "item", y = "n", color = "#93DECA", sorting = "descending", rotate = T, add = "segments", dot.size = 8, label = round(item_count$n), font.label = list(color = "#284450", size = 10, vjust = 0.5), ggtheme = theme_void()) + 
+#   xlab("") + ylab("") +
+#   ggtitle(" ") +
+#   theme(
+#     panel.grid.major.x = element_blank(),
+#     panel.grid.minor.x = element_blank(),
+#     axis.text.x = element_blank(),
+#     axis.ticks.x = element_blank(),
+#     axis.ticks.y = element_blank(),
+#     axis.text.y = element_text(colour = "#fff"),
+#     axis.title.y = element_text(),
+#     plot.title = element_text(colour = "#fff", hjust = 0.5)
+#     )
+# 
+# ## Build the matrix for the chord diagram
+# ## Count items by each season
+# item_n <- item %>%
+#   group_by(season, item) %>%
+#   summarise(n_item = sum(item_number))
+# 
+# item_wider <- item_n %>%
+#   pivot_wider(names_from = item, values_from = n_item) %>%
+#   mutate(across(everything(), ~replace_na(.x, 0)))
+# 
+# item_matrix <-  item_wider %>%
+#   column_to_rownames("season") %>%
+#   as.matrix()
+# 
+# 
+# ## Create colour palette for the chord diagram
+# cb_palette <- brewer.pal(9, "RdBu") ## colour blind friendly
+# 
+# ## create structure to assign to each season a specific color based on the
+# ## items.
+# role_colour <- structure(cb_palette, names = item_wider$season)
+# colnames(item_wider[2:28])
+# item_wider_colour <- structure(rep("#F7F7F7",
+#                                             length(colnames(item_wider[2:28]))),
+#                                names = colnames(item_wider[2:28]))
+# ## create a colour grid for the chord diagram
+# col_grid <- c(item_wider_colour, role_colour)
+# 
+# ## formula format for circlize charts
+# 
+# p2 <- ~circos_function(item_matrix, "", col_grid)
+# 
+# title_gg <- ggplot() +
+#   labs(title = "Which item do I need? A pot or a soap?",
+#        subtitle = "The participants of Alone, the survival TV show, were allowed to bring with them 10 items. The most popular across all the seasons was a pot.") +
+#   theme(
+#     plot.title = element_text(size = 24, colour = "white",
+#                               hjust = 0.5,
+#                               face = "bold"),
+#     plot.subtitle = element_text(size = 16, colour = "white", hjust = 0.5),
+#     plot.background = element_rect(fill = alpha("#284450", 0.8),
+#                                    colour = alpha("#284450", 0.8)),
+#     plot.margin = margin(18, 0, 12, 0)
+#   )
+# 
+# subtitle_gg <- ggplot() +
+#   labs(caption = "Source: TV series Alone, Design: Rita Giordano") +
+#   theme(
+#     plot.caption = element_text(size = 10, colour = "white",
+#                                 hjust = 0.85,
+#                                 face = "bold"),
+#     plot.background = element_rect(fill = alpha("#284450", 0.8),
+#                                    colour = alpha("#284450", 0.8))
+#     #plot.margin = margin(18, 0, 12, 0)
+#   )
+# 
+# plot_row <- plot_grid(p1,
+#                       p2,
+#                       labels = c("Favourite items across all seasons",
+#                                  "Items per each season"),
+#                       ncol = 2,
+#                       label_colour = "white",
+#                       label_size = 14,
+#                       hjust = 0,
+#                       label_x = 0.31,
+#                       #align = 'v',
+#                       rel_widths = c(0.2, 0.3),
+#                       rel_heights = c(0.01, 0.001)
+# ) +
+#   theme(plot.margin = margin(14, 3, 4, 8))
+# subtitle_cow <- add_sub(plot_row,
+#                         "Source: Alone, Design: Rita Giordano",
+#                         fontface = "bold",
+#                         size = 10,
+#                         color = "white",
+#                         hjust = -1.2)
+# 
+# p3 <- plot_grid(title_gg,
+#           ggdraw(subtitle_cow),
+#           ncol = 1, rel_heights = c(0.1, 1)) +
+#   theme(plot.background = element_rect(fill = alpha("#284450", 1)))
+
+```
+
+
+
+
+[^1]: Source: https://en.wikipedia.org/wiki/Alone_(TV_series)
+[^2]: Source: https://github.com/doehm/alone
+[^3]: Source: https://github.com/rfordatascience/tidytuesday/blob/master/data/2023/2023-01-24/readme.md

@@ -115,6 +115,7 @@ color1 <- "#dee2e6" #To be used for parts of the plot.
 color2 <- "#252324" #To be used for the Axis, the points in the scatter plot, and the text
 
 ```
+
 ## Create Plots
 
 ```{r}
@@ -144,10 +145,16 @@ ctytornados %>%
 
 ggsave(filename = "20230516TTa.png", width = 10.5, height = 10.5, dpi = 300, device = ragg::agg_png)
 
-   
 ```
 
-So I am not overly ecstatic with this image. It doesn't show much in the delineation in terms of the number of tornadodoes by county. Additionally the chart appears to be backwards. This is 
+
+So I am not overly ecstatic with this image. It creates a mess of a chart and frankly, I don't particularly like it. Below I attempt to create a choropleth map, but this time it will be at the state level, and I will be using leaflet. I think it will be a better chart and perhaps more informative.
+
+```{r}
+# Variables -- yr, st, slat, slon
+# Use datetime_utc to count the tornados, because that represents a unique value. There may be multiple tornados on the same date, but never the same time.
+```
+
 
 ## References
 
