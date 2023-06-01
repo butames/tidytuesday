@@ -13,6 +13,7 @@ bibliography: https://api.citedrive.com/bib/94ea4ce6-0d99-4cf2-9f69-7ac984099349
 editor: source
 ---
 
+
 ## Introduction
 
 <img src="img/oldladybook.svg" title="Old lady rreading a book" alt="Old lady reading a book" width="90%">
@@ -29,6 +30,7 @@ The data this week comes from the Wikipedia List of the verified oldest people. 
 
 ## Libraries
 
+
 ```{r, library, warning=FALSE, message=FALSE}
 
 library(tidyverse)
@@ -41,7 +43,9 @@ library(glue)
 
 ```
 
+
 ## Data
+
 
 ```{r, data, warning=FALSE, message=FALSE}
 
@@ -55,9 +59,11 @@ centenarians <- read_csv("data/centenarians.csv")
 
 ```
 
+
 ## Loading Fonts
 
 I have been in love with the Quicksand font of late. I think it's simple, and easy on the eyes and it doesn't look either too formal or too casual. I hope my interpretation of the font is correct because I have been using it for some important documents. 
+
 
 
 ```{r, fonts, warning=FALSE, message=FALSE}
@@ -68,11 +74,13 @@ showtext_auto()
 
 ```
 
+
 ## Make Events Data
 
 The actual plot with the data is going to be a timeline showing the lifespan of the longest living individual, Jeanne Calment. Calment lived in Provence, France from 1875 to 1997. Add to this life span are the major events during that time span, such as the world wars. This based on the work of Nicola Rennie <a href="https://fosstodon.org/@nrennie">*nrennie* on Mastadon</a> | <a href="https://twitter.com/nrennie35?lang=en">*nrennie35* on Twitter</a>, and <a href="https://github.com/nrennie">*nrennie* on Github</a>. I chose their work because of the timeline nature of the viz. I have been looking for a good way to show a timeline viz using `ggplot` and I think this is it.
 
 <img src="img/nrennie_final.jpeg" title="Dr. Nicola Rennie - TidyTuesday - Verified oldest people " alt="" width="90%"/>
+
 
 
 
@@ -94,8 +102,6 @@ events <- tibble(
 )
 
 ```
-
-
 
 ```{r, plots, warning=FALSE, message=FALSE}
 # start recording -- To Create a gif of the project
@@ -389,10 +395,12 @@ gg_playback(
 
 
 
+
 ## Importing Data
 
 
 [^1]:   <a href="https://en.wikipedia.org/wiki/List_of_the_verified_oldest_people">List of the verified oldest people</a>
+
 
 
 
