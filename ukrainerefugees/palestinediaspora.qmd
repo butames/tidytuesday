@@ -1,0 +1,235 @@
+---
+title: "The Palestinian Diaspora"
+author: "Seyram A. Butame"
+date: last-modified
+date-format: "DD-MM-YYYY"
+title-block-banner: "#90BFEE"
+format:
+  html:
+    toc: true
+    code-fold: true
+    code-overflow: wrap
+    css: styles.css
+bibliography: https://api.citedrive.com/bib/94ea4ce6-0d99-4cf2-9f69-7ac984099349/references.bib?x=eyJpZCI6ICI5NGVhNGNlNi0wZDk5LTRjZjItOWY2OS03YWM5ODQwOTkzNDkiLCAidXNlciI6ICIxOTAyIiwgInNpZ25hdHVyZSI6ICI1YjQyYWJhMGJjN2EwZDRkZGJhNjJjNjAyNTVlODljYzNmMWYyOTYyODMzN2E0YWViYzViYTExNGU5NjYzZTUxIn0=/bibliography.bib
+csl: nature.csl
+editor: source
+always_allow_html: true
+---
+
+```{r}
+# ---- REQUIRED PACKAGES
+
+library(maps)
+library(mapproj)
+library(tidyverse)
+library(ggtext)
+library(showtext)
+
+```
+
+## PALESTINIAN DIASPORA (COUNTRIES NEIGHBORING PALESTINIAN TERRITORIES)
+
+```{r}
+# ---- WORLD MAP DATA
+
+# Import the map dataframe from the maps library 
+
+map1 <- map_data("world")
+
+# ----- PALETINIAN DIASPORA DATA  
+
+countries<-c("Palestine", "Jordan", "Israel", "Syria", "Lebanon", "Saudi Arabia", "Egypt")
+refugees <-c(0, 3240000, 1650000, 630000, 402582, 280245, 270245)
+
+
+df2 <- tibble(
+  countries = countries,
+  refugees = refugees)
+
+```
+
+## DEFINE COLORS
+
+```{r}
+# DEFINE COLORS -----
+# Set fill colors per region. 
+# Palestine (Gaza and West bank) = Blue
+# Israel = red
+# Other neighboring countries= green
+# Countries that are not immediately bordering (i.e., "other") = grey
+
+map1 <- map1 %>% 
+  mutate(fill = case_when(region == "Palestine"~"#90BFEE",
+                          region %in% c("Israel") ~"#CB9DA7",
+                          region %in% countries ~ "#79BD9D",
+                          TRUE ~ "grey85")
+         )
+```
+
+
+## DATA WRANGLING
+
+```{r, wranglingm, message=FALSE, warning=FALSE}
+
+# DATA FRAME ----
+# create dataframe for points of information
+
+ptmap <- map1 %>%
+  group_by(region) %>%
+  # create centroids for lat long per region
+  filter(region %in% countries & region != "Palestine")%>%
+  summarise(lat = mean(lat),
+            long = mean(long)) %>%
+  # append refugee data
+  left_join(data2, by=c("region" = "countries"))%>%
+  mutate(
+    #override Saudi Arabia centroid, map cut-off
+         lat = replace(lat, region == "Saudi Arabia", 24),
+         long = replace(long, region == "Saudi Arabia",44),
+    #include Ukrainian label coordinates as starting point for migration lines
+         lat_isr = 32.7, 
+         long_isr = 35.8,
+         #add vjust parameters to adjust text data in plots
+         region_vjust = case_when(refugees > 60000 ~ -.8, TRUE ~ -4),
+         stat_vjust = case_when(refugees > 60000 ~1.1, TRUE~0.1),
+         name_color = case_when(refugees > 60000 ~ '#1A5A9A', TRUE ~"white")
+  )
+
+#Ukraine label
+text_data2 <- tibble(
+  text= "ISRAEL", 
+  lat = 32.73, 
+  long = 35.79
+)
+
+# POINT CITIES -----
+#import city coordinates from map library  
+
+data(world.cities)
+
+# filter world cities for Ukrainian cities
+# use top 5 most populous cities
+
+isr_cities <- world.cities %>% filter(country.etc =="Israel") %>% arrange(-pop) %>% head(2)
+
+```
+
+
+## DEFINE TITLES 
+
+```{r, titles, warning=FALSE, message=FALSE}
+
+tt <- str_glue("Data and Plot Learning<br>")  
+tw <- str_glue("<span style='font-family:fa6-brands'>&#xf099;</span>") # Defines my twitter
+gh <- str_glue("<span style='font-family:fa6-brands'>&#xf09b;</span>") # Defines my github
+lk <- str_glue("<span style='font-family:fa6-brands'>&#xf08c;</span>") # Defines my LinkedIn account
+
+title_text    <- str_glue("NUMBER OF UKRAINIAN REFUGEES IN NEIGHBORING EUROPEAN COUNTRIES") 
+sub_text      <- str_glue("The number of Ukrainian refugees in neighboring countries.")
+cap_text      <- str_glue("{tt} Visualization: {tw} @butames &bull; {lk} @butames Code: {gh} butames &bull; Tools: #rstats #ggplot")
+
+```
+
+
+```{r}
+
+# CREATE PLOT -----
+ pl2 <- map1 %>%
+  ggplot(aes(long, lat, group=group)) +
+  geom_polygon(aes(fill = fill), color="white", size=0.3) +
+  #migration lines
+  geom_segment(inherit.aes=FALSE, data=ptmap, aes(x=long_isr, xend=long, y=lat_isr, yend=lat), size=0.8,
+               linetype="dotted", color='#1A5A9A') +
+  #overlay Israel country map
+  geom_polygon(data = map1 %>% filter(region=="Israel"), aes(fill=fill), color="white", size=0.3) +
+  #plot refugee bubbles
+  geom_point(inherit.aes=FALSE, data = ptmap, aes(long, lat, size=refugees/100), fill='#90BFEE',
+             color='#579DE2', shape=21) +
+  #overlay refugee numbers
+  geom_text(inherit.aes=FALSE, data=ptmap, 
+            aes(long, lat,label=scales::comma(refugees),
+                vjust=stat_vjust), size=6.5, family="Arvo", color='#1A5A9A') +
+  #overlay country names
+  geom_text(inherit.aes=FALSE, data= ptmap, 
+            aes(long, lat, label=toupper(region), 
+                vjust=region_vjust, color=name_color), size=6.5, family="Arvo") +
+  #Israel label
+  geom_text(inherit.aes=FALSE, data=text_data2, 
+            aes(long, lat, label=text), size=12, family="Arvo", color='#1A5A9A') +
+  #Israel cities
+  geom_point(inherit.aes=FALSE, data = isr_cities, 
+             aes(long,lat), color='#1A5A9A') +
+  geom_text(inherit.aes=FALSE, data = isr_cities, 
+            aes(long,lat,label=name), size=9, vjust=1.7, family="Arvo", color='#1A5A9A') +
+
+  ##   Match colors with data frame ----
+# set the fill and color color to match the inputs from the dataframe with "scale_identity
+  scale_fill_identity() +
+  scale_color_identity() +
+  scale_size(range=c(9, 37), breaks=c(100, 150, 200, 250, 500), guide="none") +
+
+  ## Limit data to the Ukraine Region ----  
+# adjust section of world map to focus on Ukraine and neighboring countries with xlim & ylim
+
+  coord_map(xlim=c(28, 48),
+            ylim=c(20, 38)) +
+  
+  ## Add Titles and Labels ----
+#add title and themes
+  labs(x = "",
+       y = "",
+       title = title_text,
+       subtitle = sub_text,
+       caption = cap_text) +
+  
+  ## Theme the Plot -----
+  theme_minimal() +
+  
+  theme(plot.title.position = "plot",
+        plot.caption.position = "plot",
+        legend.position = "top",
+        
+        plot.background = element_blank(),
+        panel.background = element_blank(),
+        plot.margin = margin(t = 10, b = 10, r = 10, l = 10),
+        axis.title = element_blank(),
+        axis.line.x = element_blank(),
+        axis.line.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        
+        plot.title            = element_markdown(
+          family              = "title",
+          face                = "bold",
+          size                = 22,
+          hjust               = 0.5,
+          halign              = 0.5,
+          margin              = margin(t =10, b = 5)),
+        plot.subtitle         = element_markdown(
+          family              = "text",
+          size                = 18,
+          hjust               = 0.5,
+          halign              = 0.5,
+          margin              = margin(t = 5, b = 10)),
+        plot.caption          = element_markdown(
+            family            = "caption",
+            lineheight        = 0.6,
+            size              = 18,
+            hjust             = 0.5,
+            halign            = 0.5,
+            margin            = margin(t = 10, b = 10))
+        )
+
+```
+
+```{r}
+pl2
+```
+
+```{r}
+
+pl2 <- ggsave("palestine_dias.jpeg", height=8.5, width=12)
+
+```

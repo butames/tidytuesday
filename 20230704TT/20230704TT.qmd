@@ -1,0 +1,309 @@
+---
+title: "Historical Marker"
+author: "Seyram A. Butame"
+date: "last-modified"
+format: 
+  html:
+    toc: true
+    code-fold: true
+    code-overflow: wrap
+    css: styles.css
+  pdf: default
+bibliography: https://api.citedrive.com/bib/94ea4ce6-0d99-4cf2-9f69-7ac984099349/references.bib?x=eyJpZCI6ICI5NGVhNGNlNi0wZDk5LTRjZjItOWY2OS03YWM5ODQwOTkzNDkiLCAidXNlciI6ICIxOTAyIiwgInNpZ25hdHVyZSI6ICI1YjQyYWJhMGJjN2EwZDRkZGJhNjJjNjAyNTVlODljYzNmMWYyOTYyODMzN2E0YWViYzViYTExNGU5NjYzZTUxIn0=/bibliography.bib
+csl: nature.csl
+editor: source
+always_allow_html: true
+---
+
+## TIDYTUESDAY Week 27 - Historical Markers
+
+
+For this week, the TidyTuesday[@Mock2022-tt] data cames from <a href="https://www.hmdb.org/geolists.asp?c=United%20States%20of%20America">Historical Marker Database USA Index</a>. The parent website essentially tries to provide historical information through the lens "*of roadside and other permanent outdoor markers, monuments, and plaques*". The overall tidytuesday project also contains information on places that do not have entries in the HMDB database. This is an effort to encourage us to perhaps find markers that need to be added to HMDB database. Datails on this TidyTuesday project may be found on <a href="https://github.com/rfordatascience/tidytuesday/blob/master/data/2023/2023-07-04/readme.md">Github-Rfordatascience</a>.
+
+## POSSIBLE VISUAL REPRESENTATION
+
+Presently, I am still on a drive to create infographics. This week I want to practice a bit with mapping data. Maps can be very informative, and I have experience with them through Tableau. I would like to improve my ability with maps using R. So here we go. I am modeling my project on <a href="https://twitter.com/geokaramanis">Georgios Karamanis</a>. Karamanis is a great follow on Twitter when it comes to data visual documents and for TidyTuesday projects. Karamanis is especially good at creating visual documents in map form.
+
+Personally, I am going for a standard map, something that looks like the sketch in Figure 01 (don't mind the rough handwriting, as it is what I broadly want to create). A couple of weeks back, I created a tile map (a variation on the HEX tile map variety). In this case, it may be useful to create an actual map, as the location and proximity to things typically shown on a map are important to interpreting this data. It may also be a good idea to employ a tool such as Leaflet (or Plotly) which can add some interactivity. I will have to complete the static info-graphic and then I will consider some interaction.
+
+<figure class="img1">
+  <img src="img/sketch.jpg" alt="Sketch for planned inforgraphic" width="45%">
+  <figcaption class="figcap">Figure 1 - Sketch for planned infographic.</figcaption>
+</figure>
+
+Karamanis created the below (Figure 02) for TidyTuesday and another creator Erin Franke created the below (Figure 03). Both really great and akin to what I am thinking of doing.
+
+
+<div class="row">
+  <figure class="column">
+    <img src="img/karamanis.jpeg" alt="Infographic created by Karamanis" style="width:80%">
+    <figcaption class="figcap">Figure 2 - Georgios Karamanis's infographic.</figcaption>
+  </figure>
+  <figure class="column">
+    <img src="img/franke.jpeg" alt="Infographic created by Franke" style="width:100%">
+    <figcaption class="figcap">Figure 3 - Erin Franke's infographic.</figcaption>
+  </figure>
+</div>
+
+## LIBRARIES
+
+```{r, libs, message=FALSE, warning=FALSE}
+
+library(tidytuesdayR)
+library(tidyverse)
+library(sf)
+library(skimr)
+library(camcorder)
+library(janitor)
+library(gt)
+library(ggtext)
+
+## ARRANGING the PLOTS IN CANVAS----
+
+library(patchwork)
+library(cowplot)
+
+## FOR RETREIVING MAP DATA ----
+ 
+# remotes::install_gitlab("dickoa/rgeoboundaries")
+library(rgeoboundaries)
+library(rmapshaper)
+
+##  FOR CREATING MAPS ----
+
+library(ggpointdensity)
+library(RColorBrewer)
+
+```
+
+I am going to keep things a bit simple use the packages I am familiar with.
+
+1. First we have `tidyverse` which is my standard workhorse data wrangling suite of packages. Easy to use with an intuitive language.[@2019Wickham-td]
+
+2. The `sf` package is critical for encoding spatial vector data according to the Simple Features standard described by the Open Geospatial Consortium (OGC) and International Organization for Standardization (ISO). I have used it a bit in the past particularly for getting data to create plots in Leaflet.[@Pebesma2023-hl]
+
+3. This is my introduction to the `skimr` pckage. However I have learned that it allows you to create quick summary statistics about variables in data frames, tibbles, data tables and vectors. Very handy for viewing data in the TidyTuesday data object.[@Waring2022-sk]
+
+4. The `camcorder` package can be used to store the plots or images generated.[@2022Hughes-cc]
+
+5. I typically use the `janitor` package for importing data in a clean manner. The clean_names() function in particular is a favorite of mine.[@2023Firke-aw]
+
+6. I have also included the `gt` package, which serves to create beautiful html tables. I need to become a bit more comfortable with that package.[@Iannnone2023-gt]
+
+
+## DATA
+
+There are two dataframes in the data object from this week. There is:
+-   First we have **historical_markers.csv**, which contains the historical markers and information data provided by the HMDB.
+-   Secondly we have the **no_markers.csv**, which contains the 
+
+You can access the access the <a href="https://github.com/rfordatascience/tidytuesday/blob/master/data/2023/2023-07-04/readme.md">data dictionary or codebook</a> by clicking the link. I have also posted them below 
+
+```{r, data, message=FALSE, warning=FALSE}
+
+## DOWNLOAD USING API [VIA TIDYTUESDAYR PACKAGE] -----
+
+# tuesdata <- tt_load(2023, week = 27)
+# 
+# historical_markers <- tuesdata$`historical_markers` %>%
+#   clean_names() %>%
+#   write_csv("data/historical_markers.csv")
+# 
+# no_markers <- tuesdata$`no_markers` %>%
+#   clean_names() %>%
+#   write_csv("data/no_markers.csv")
+
+
+# ALTERNATIVE DOWNLAOD (DIRECT LINK) ----
+
+# historical_markers <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-07-04/historical_markers.csv")
+
+#no_markers <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-07-04/no_markers.csv')
+
+## READ IN DATA [DOWNLOADED ALREADY USING ABOVE] ----
+
+df1 <- read_csv("data/historical_markers.csv")
+
+df2 <- read_csv("data/no_markers.csv")
+
+
+## READ IN DATA DICTIONARIES ----
+
+ddhm <- read_csv("data/ddhistorical_markers.csv")
+
+ddnm <- read_csv("data/ddno_markers.csv")
+```
+
+You can access the access the <a href="https://github.com/rfordatascience/tidytuesday/blob/master/data/2023/2023-07-04/readme.md">data dictionary or codebook</a> by clicking the link. I have also posted them below 
+
+```{r, dd, warning=FALSE, message=FALSE}
+
+# DISPPLAY DATA DICTIONARY [HISTORICAL MARKERS] ----
+
+ddhm %>%
+  gt()  %>%
+  tab_header(
+    title = "Historical Markers - Codebook",
+    subtitle = "TidyTuesday Week 27 Data Dictionary") %>%
+  tab_source_note(source_note = "https://github.com/rfordatascience/tidytuesday/blob/master/data/2023/2023-07-04/readme.md") %>%
+  tab_options(
+    table.font.size = px(10)
+    )
+
+ddnm %>%
+  gt()  %>%
+  tab_header(
+    title = "No Markers - Codebook",
+    subtitle = "TidyTuesday Week 27 Data Dictionary") %>%
+  tab_source_note(source_note = "https://github.com/rfordatascience/tidytuesday/blob/master/data/2023/2023-07-04/readme.md") %>%
+  tab_options(
+    table.font.size = px(10)
+    )
+
+```
+
+
+## EXAMINE THE DATA
+
+As I noted above, I just discovered the `skimr` package and all of its capabilities. I think I will be employing it as my precursor to the data wrangling step. You can find more information about <a href="https://cran.r-project.org/web/packages/skimr/vignettes/skimr.html">using `skimr` here</a>
+
+```{r, look, message=FALSE, warning=FALSE}
+
+skim(df1)
+
+```
+
+
+## SETUP THE CANVAS
+
+We can achieve this by making use of the `camcorder` package. This part is always a bit tricky for me, because it requires some understanding of the dimensions of your infographic and how you want to display. I find myself tweaking it as I work through the data.
+
+
+```{r, canvas, message=FALSE, warning=FALSE}
+
+gg_record(dir = "plots", 
+          device = "png", 
+          width = 10, 
+          height = 8, 
+          units = "in", 
+          dpi = 320)
+
+```
+
+There are a couple of different ways of creating static maps in R. For most cases you have to import the boundary data or use a shapefile. I am trying to learn how to effectively import boundary data and so I am going to use the following package: `rgeoboundaries`. With the `gb_adm1()` function from the rgeoboundaries package, you can retrieve the necessary boundary data. Then with the `st_transform()` function from the sf package you can convert the boundary data into a simple format for use in R in combination with the `st_crs()` function also from the `sf` package. Within the st_crs() function we specify the specific geospatial projection we want. In our case it will transform the spatial object to the EPSG:2163 projection. This constitutes the geospatial projection for USA. And finally, the ms_simplyfy() function from the `rmapshaper` package simplifies the polygon data. Hence we end up with a dataframe, similar to what we would get if we downloaded a shapefile and imported that for our analysis, complete with a vector contains the requisite polygon data.
+
+
+```{r, karamanis, message=FALSE, warning=FALSE}
+
+# DATAFRAME CONTAINING USA POLYGON DATA ----
+
+us <- gb_adm1("usa")%>%
+  st_transform(st_crs(2163)) %>%
+  ms_simplify()
+
+head(us)
+
+# DATAFRAME DECADE OF MONUMENT ERECTION ----
+
+df1dec <- df1 %>%
+  mutate(decade = year_erected %/% 10 * 10) %>%
+  filter(!is.na(decade)) %>%
+  mutate(decade = if_else(decade < 1900, "1850s-1890s", paste0(as.character(decade), "s")))
+
+# Pay attention to the last line which does the following: If the decade variable is 1850, the if_else() function would return the string "1850s -19890s". If the decade variable is 1900, the if_else() function would return the string "1900s".
+
+head(df1dec)
+
+# CREATE VECTOR WITH JUST DECADES COLUMN ----
+
+decades <- sort(unique(df1dec$decade))
+
+head(decades)
+
+# DATAFRAME WITH MARKERS BY DECADE IN EACH STATE ----
+# We are selecting the decades and states with the highest counts of markers
+
+state_decade <- df1dec %>%
+  group_by(decade) %>%
+  count(state_or_prov, sort = TRUE) %>%
+  slice_max(order_by = n, n = 3) %>%  # Produces the top 3 states with highest counts for each decade.
+  mutate(
+    y = rev(row_number()),
+    state_or_prov = if_else(y == 3, paste0("**", state_or_prov, "**"), state_or_prov),
+    nc = as.character(scales::number(n)),
+    nc = if_else(y == 3, paste0("**", nc, "**"), nc)
+    ) %>%
+  ungroup()
+
+# In the latter part of this variable, 
+  ## - `y` which has values from 3 down to 1 for the top 3 rows.
+  ## -  Changes the variable `state_or_prov` such that, if the variable `y` is equal to 3, it surrounds the state_or_prov value with double asterisks (**) to emphasize it. Otherwise, it leaves the state_or_prov value unchanged.
+  ## - Creaets `nc` such that `nc` is equal to the n variable (count) to character format.
+  ## - Similar to the `state_or_prov` mutation if `y` is equal to 3, it surrounds the nc value (count) with double asterisks.
+
+head(state_decade)
+
+## DENSITY PLOT (MARKERS ON MAP OF US) ----
+
+# The below creates a scatterplot of the markers_density data, with points colored by decade. The size of the points is controlled by the size parameter. The facet_wrap function is used to create a separate plot for each decade.
+
+pl1 <- df1dec %>%
+  ggplot() +
+  geom_pointdensity(aes(x = longitude_minus_w, y = latitude_minus_s), size = 0.25) +
+  facet_wrap(vars(decade))
+
+pl1
+
+# DATAFRAME CONTAINING DATA FROM PLOT
+# You can extract the data from a ggplot using the ggplot_build() function.
+ 
+df1proj <- ggplot_build(pl1)$data[[1]] %>%
+  st_as_sf(crs = 4326, coords = c("x", "y")) %>%
+  st_transform(st_crs(2163)) %>%
+  rename(facet = PANEL) %>%
+  mutate(decade = decades[facet])
+
+df1proj
+
+
+
+f1 <- "Outfit"
+f2 <- "Source Serif Pro"
+
+
+pal <- brewer.pal(9, "YlOrRd")[4:9] #The function creates a palette of 9 colors from the YlOrRd sequential color scheme. Furthermore, it indexes into the palette to select the 5 colors from the 4th to the 9th position.
+
+
+# 
+p <- ggplot(df1proj) +
+  geom_sf(data = us, fill = "#F5FEFC", linewidth = 0.1) +
+  geom_sf(aes(color = n_neighbors), size = 0.4) +
+  geom_richtext(data = state_decade, aes(x = -1.95e6, y = -2.3e6 + y * 2e5, label = paste(state_or_prov, nc)), hjust = 0, size = 2.5, family = f1, fill = NA, label.color = NA, label.padding = unit(0, "lines")) +
+  scale_color_gradientn(colors = pal) +
+  facet_wrap(vars(decade)) +
+  coord_sf(xlim = c(-2e6, 2.5e6), ylim = c(-2.3e6, 0.73e6)) +
+  theme_void(base_family = f1) +
+  theme(
+    legend.position = "none",
+    plot.background = element_rect(fill = "grey99", color = NA),
+    strip.text = element_text(family = f2, face = "bold")
+  )
+
+p
+
+# 
+t <- ggplot() +
+  geom_text(aes(0, 0, label = "U.S. Historical Markers"), family = f2, size = 9.5, hjust = 0, fontface = "bold") +
+  geom_text(aes(0, -0.55, label = "Location of new historical markers in The Historical Marker\nDatabase by decade erected. The 3 states with the most\nnew markers are shown for each decade."), family = f2, size = 4, hjust = 0, lineheight = 0.9) +
+  geom_text(aes(0, -1, label = "Source: The Historical Marker Database · Graphic: Georgios Karamanis"), family = f1, size = 3, hjust = 0) +
+  scale_x_continuous(limits = c(0, 15)) +
+  scale_y_continuous(limits = c(-1, 0.5)) +
+  coord_cartesian(clip = "off") +
+  theme_void()
+
+
+# 
+p + inset_element(t, left = 0.5, right = 0.9, bottom = 0.08, top = 0.28)
+
+```
+

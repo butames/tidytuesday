@@ -1,0 +1,278 @@
+---
+title: "TidyTuesday Week 34 - Refugees"
+author: "Seyram A. Butame"
+date: last-modified
+date-format: "DD-MM-YYYY"
+title-block-banner: "#7B848F"
+format:
+  html:
+    toc: true
+    code-fold: true
+    code-overflow: wrap
+    css: styles.css
+bibliography: https://api.citedrive.com/bib/94ea4ce6-0d99-4cf2-9f69-7ac984099349/references.bib?x=eyJpZCI6ICI5NGVhNGNlNi0wZDk5LTRjZjItOWY2OS03YWM5ODQwOTkzNDkiLCAidXNlciI6ICIxOTAyIiwgInNpZ25hdHVyZSI6ICI1YjQyYWJhMGJjN2EwZDRkZGJhNjJjNjAyNTVlODljYzNmMWYyOTYyODMzN2E0YWViYzViYTExNGU5NjYzZTUxIn0=/bibliography.bib
+csl: nature.csl
+editor: source
+always_allow_html: true
+---
+
+## REFUGEE DATA 
+
+This week puts together data from United Nations High Commission on Refugees (UNCHR) annual statistical activities dating back to 1951, United Nations Relief and Works Agency for Palestine Refugees in the Near East (UNRWA)
+
+## LIBRARIES
+
+I am using the following pacakge for this project.
+
+- `tidyverse` - A workhorse suite fo packages for data wrangling and manipulation, It includes `dplyr` and `lubridate`.[@Wickham2019-td]
+- `tidytuesdayR` -- The package for accessing the relevant week's data.[@hughes2019-st]
+- `ggtext` -- A package to help with text rendering when working ggplot. [@2022Wilke-wt]
+- `showtext` -- Allows you to use an array of fonts with ggplot and R, of note are the Google Fonts.[@2022Qiu-px]
+- `janitor` -- A package to help with data cleaning and management similar to `dplyr`. [@2023Firke-jw]
+- `scales` -- A package that provides functions for scaling and formatting data for data visualization.[@2022Wickman-sc]
+- `here` -- A package to help to navigate to specific project folders.[@2020Müller-hr]
+- `camcorder` -- A pcakge to create a canvas for plots.[@2022Hughes-cc]
+
+```{r, libs, warning=FALSE, message=FALSE}
+
+library(tidytuesdayR)
+library(tidyverse)
+library(ggtext)
+library(showtext)
+library(janitor)
+library(scales)
+library(camcorder)
+library(here)
+
+```
+
+
+## RAW DATA
+
+Like with every TidyTuesday project, you can access the data via an API key, which is what the `tidytuesdayR` package facilitates. Alternatively, you can download the data object directly via a link. Whatever the case the code below downloads the data and I save it as a csv. I am then able to manipulate it as a tibble for analysis. I have also provided a link to the codebook generated from the READMe file.
+
+
+```{r, rawdata, warning=FALSE, message=FALSE}
+
+## --- LOAD DATA OBJECT ----
+
+# tt_data <- tt_load(2023, week = 34)
+
+## --- VIEW DATA FRAMES/TIBBLES IN OBJECT ----
+
+# readme(tt_data)
+
+# print(tt_data)
+
+## --- ACCESS DATA FRAME ----
+
+# population <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-08-22/population.csv")
+
+ # population <- tt_data$population %>%
+ #  as_tibble() %>%
+ #  write_csv(population, path = "data/population.csv")
+
+## ---- CODEBOOK ----
+# Using the READMe file, I have created a codebook, which I have saved to the data folder.
+# Saved as pop_codebook.csv
+
+## LOAD DATA
+
+df1 <- read_csv("data/population.csv") %>%
+  as_tibble()
+
+```
+
+## EXAMINE DATA
+
+A crucial step in analysis and wrangling is examining the data. The TidyTuesday projects often come with clean data. By which I mean you don't have to spending time recoding values, or renaming variables. However, to have some idea of the kind of visual document you want to create it is a good idea to spend time parsing the data. I have always found the `colnames()` (which comes from base R) and the `glimpse()` (which comes form **dplyr**) functions to be very helpful in this endeavor.
+
+
+```{r, examine, warning=FALSE, message=FALSE, echo=FALSE}
+
+## ---- VIEW COLUMN NAMES ----
+
+colnames(df1)
+
+# ## ---- INSPECT STRUCTURE OF TIBBLE ----
+
+glimpse(df1)
+
+
+## ---- RANGE OF VALUES IN 'year' VARIABLE -----
+
+dfa <- df1$year %>%
+  range() %>%
+  as_tibble()
+dfa
+
+
+## ---- A COUNT OF THE OBSERVATIONS BY YEAR (DESC SORT)----
+
+dfb <- df1 %>% 
+  count(year, sort = T) %>%
+  as_tibble
+
+dfb
+
+## ---- A COUNT OF 'coo' (DESC SORT) ----
+## A count of the occurrences of unique 'coo'
+
+dfc <- df1 %>% 
+  count(coo_name, sort = T)
+
+dfc
+
+## ---- A COUNT OF 'coa_name' (DESC SORT) ----
+## A count of the occurrences  the unique coa_name
+
+dfd <- df1 %>% 
+  count(coa_name, sort = T)
+
+dfd
+
+## ---- A COUNT 'refugees' (DESC SORT) ----
+## A count of the instances where the unique values of refugees
+
+dfe <- df1 %>% 
+  count(refugees, sort = T)
+
+dfe
+
+## ---- A COUNT 'asylum_seekers' (DESC SORT) ----
+## A count of the instances where the unique values of asylum_seekers
+
+dff <- df1 %>% 
+  count(asylum_seekers, sort = T)
+
+dff
+
+## ---- A COUNT 'returned_refugees' (DESC SORT) ----
+## A count of the unique values of returned_refugees
+
+dfh <- df1 %>% 
+  count(returned_refugees, sort = T)
+
+dfh
+
+## ---- A COUNT 'idps' (DESC SORT) ----
+## A count of the unique values of idps
+
+dfi <- df1 %>% 
+  count(idps, sort = T)
+
+dfi
+
+```
+
+Using the above, it is best to think of the data in terms of the '**coa**' (i.e., the country of asylum seeking). For example, if you sort the data by year, ascending, the first row, shows that in 2010 there were *1899842* Afghan refugees living in Pakistan (**coa**). Of that number 1946 were seeking asylum (i.e., **asylum_seekers**). Additionally in that same year 109383 refugees were returned (i.e., **returned_refugees**), and so on.
+
+## DATA WRANGLE
+
+This is a big dataset, with data on the number of asylum seekers in every country and their country of origin. It is possible to plot all the data points, however it may be more informative to subset the data and only display information from specific countries.
+
+This is presents a good moment to introduce myself to functions in R. In R, the `function()` is a directive to be able to create a function that works like any of the other functions within a package.
+
+> A function is an object that contains multiple statements that are run together in a predefined order. Functions are useful for performing a task multiple times. 
+
+When used, the directive creates a function which is then stored as an object to be used in R. Think of it as being used in a similar way to loops and macros in Stata or SAS. Functions accept input arguments, which are specified after the function name, inside the parentheses. You can add as many arguments as you want, just separate them with a comma.
+
+For the rest, reference the codeblock below.
+
+We begin by defining the function called *sum_func*. This function will take two arguments, `tbl` and `category`.
+- tbl --> is a dataframe
+- category --> is an quoted column name within the dataframe (i.e., it will be used as a column header or variable name)
+
+The rest of the function will do the following:
+
+1. `filter(year %in% c(2021, 2022))` --> The dataframe `tbl` will be filtered to keep only rows in which the `year` has values **2021** or **2022**.
+2. `select(year:asylum_seekers)` --> We then select columns, `year` to `asylum_seekers` inclusive, data which is to be arranged in the column category.
+3. `arrange(desc(coa_name))` --> We then arrange the data in the new dataframe by the `coa_name` (i.e., country of asylum ) in descending order.
+4. `group_by(coo_name, coa_name)` --> Here we then group the data by `coo_name` (i.e., country of origin) and by the `coa_name` (i.e., country of asylum).
+5. Now we want to calcuate summary statistics for the data. We employ the `summarise()`:
+    a. First there is `ratio`, which alculates the ratio of the last value of the category column (for the year 2022) to the first value of the category column (for the year 2021).
+    b. Then there is `change`, which calculates the change in the category column value between 2022 and 2021 by subtracting 1 from the ratio.
+    c. Then comes `2021`, which extracts the first value of the category column (for the year 2021).
+    d. Then comes `2022`, which extracts the last value of the category column (for the year 2022).
+    e. Finally, `.groups = "drop"` instructs the grouping structure shouldb e dropped.
+
+We can then apply the `sum_func` object in subsequent manipulation of the data as needed.
+
+
+
+
+```{r, wrangle, message=FALSE, warning=FALSE}
+
+## ---- CREATE SUMMARY FUNCTION ----
+
+sum_func <- function(tbl, category){
+    
+    tbl %>% 
+        filter(year %in% c(2021, 2022)) %>% 
+        select(year:asylum_seekers) %>% 
+        arrange(desc(coa_name)) %>% 
+        
+        group_by(coo_name, coa_name) %>%  
+        summarise(
+            ratio   = last({{ category }}) / first({{ category }}),
+            change  = ratio - 1,                                          
+            `2021`  = first({{ category }}),
+            `2022`  = last({{ category }}),
+            .groups = "drop",
+        ) %>% 
+        ungroup()
+}
+
+asylum_seekers_2021_2022 <- df1 %>% 
+    filter(coo_name == "United States of America") %>% 
+    sum_func(category = asylum_seekers) %>% 
+    
+    # remove NaN and Inf
+    filter_all(all_vars(!is.infinite(.))) %>% 
+    filter_all(all_vars(!is.nan(.))) %>% 
+    
+    # format country names
+    mutate(
+        coa_name = case_when(
+            coa_name == "United Kingdom of Great Britain and Northern Ireland" ~ "United Kingdom",
+            coa_name == "Netherlands (Kingdom of the)"                         ~ "Netherlands",
+            TRUE ~ coa_name
+        )
+    ) %>% 
+    
+    # highlight column for color
+    mutate(
+        highlight = case_when(
+            change > 0   ~ "increase",
+            change < 0   ~ "decrease",
+            change == 0  ~ "neutral"
+        )) %>% 
+    
+    # reorder
+    mutate(coa_name = fct_reorder(coa_name, change)) 
+```
+
+
+## VISUAL INSPIRATION
+
+My inspiration for this weeks visual document or at least a part of it comes from Steven Ponce (Poncest on Github and Ponce1 on X (formerly Twitter)). Ponce created a lollipop chart, which is change on the standard bar chart. However, you can pack a bit more information into a lollipop chart given that it has additional components. Plus it looks different from your run-of-the-mill horizontal bar chart.
+
+
+```{r, canvas, warning=FALSE, message=FALSE}
+
+# --- CANVAS ---- 
+
+gg_record(
+  dir    = here("plots"), 
+  device = "png",
+  width  = 8,
+  height = 8,
+  units  = "in",
+  dpi    = 320) 
+
+## ---- IMAGE RESOLUTION ---
+# The showtext_opts() sets the parameters for the graphs that are created. In this case, dpi indicates the resolution, while regular.wt and bold.wt specify font weights for text.
+
+showtext_opts(dpi = 320, regular.wt = 300, bold.wt = 800)
+
+```

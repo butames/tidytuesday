@@ -1,0 +1,18 @@
+variable,class,description
+marker_id,double,Unique ID for this marker in the HMDB
+marker_no,character,Number of this marker in the state numbering scheme.
+title,character,Main title of the marker.
+subtitle,character,"Subtitle of the marker, if any."
+addl_subtitle,character,Additional subtitle text.
+year_erected,integer,The year in which the marker was erected.
+erected_by,character,The organization which erected the marker.
+latitude_minus_s,double,The latitude of the marker.
+longitude_minus_w,double,The longitude of the marker.
+street_address,character,"The street address of the marker, if available."
+city_or_town,character,"The city, town, etc in which the marker is located."
+section_or_quarter,character,"The section of the city, town, etc, when available."
+county_or_parish,character,"The county, parish, or similar designation in which the marker appears."
+state_or_prov,character,"The state, province, territory, etc in which the marker appears."
+location,character,A description of the marker's location.
+missing,character,"Whether the marker is ""Reported missing"" or ""Confirmed missing"". NA values indicate that the marker has neither been reported missing nor confirmed as missing."
+link,character,"The HMDb link to the marker. Links include additional details, such as photos and topic lists to which this marker belongs."

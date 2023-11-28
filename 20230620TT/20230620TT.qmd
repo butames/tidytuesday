@@ -1,0 +1,574 @@
+---
+title: "UFO Sightings Redux"
+author: "Seyram A. Butame"
+date: "last-modified"
+format: 
+  html:
+    toc: true
+    code-fold: true
+    code-overflow: wrap
+    css: styles.css
+  pdf: default
+bibliography: https://api.citedrive.com/bib/94ea4ce6-0d99-4cf2-9f69-7ac984099349/references.bib?x=eyJpZCI6ICI5NGVhNGNlNi0wZDk5LTRjZjItOWY2OS03YWM5ODQwOTkzNDkiLCAidXNlciI6ICIxOTAyIiwgInNpZ25hdHVyZSI6ICI1YjQyYWJhMGJjN2EwZDRkZGJhNjJjNjAyNTVlODljYzNmMWYyOTYyODMzN2E0YWViYzViYTExNGU5NjYzZTUxIn0=/bibliography.bib
+csl: nature.csl
+editor: source
+always_allow_html: true
+---
+
+## UFO Sightings
+
+The data for this week's TidyTuesday challenge comes from from the **National UFO Reporting Center**, cleaned and enriched with data from <a href="https://sunrise-sunset.org/">sunrise-sunset.org</a> by <a href="https://github.com/jonthegeek/apis/">Jon Harmon</a>. Apparently, this is an updated version of an earlier TidyTuesday exercise completed in 2019. I will have to go back and look at som fo thevisual documents from that challenge week.
+
+<figure class="img1">
+  <img src="img/trent600dpi.jpg" alt="First McMinnville UFO photograph" width="45%">
+  <figcaption class="figcap">Figure 1 - First UFO picture taken by Paul Trent in McMinnville, OR. USA (c. 1950).[^1] </figcaption>
+</figure>
+
+<figure class="img1">
+  <img src="img/trent2600dpi.jpg" alt="Second McMinnville UFO photograph" width="45%">
+  <figcaption class="figcap">Figure 2 - Second UFO picture taken by Paul Trent in McMinnville, OR. USA (c. 1950).[^1]</figcaption>
+</figure>
+
+## Library
+
+I will be making use of the following packages in R.
+
+1. `tidyverse` -- Workhorse suite fo packages for data wrangling and plotting.[@hughes2019-st]
+2. `tidytuesdayR` -- For retrieving the weekly challenge data. [@2019Wickham-td]
+3. `camcorder` -- To create a canvas for the plot and visual documents, and for recording steps in creating the final product.[@2022Hughes-cc]
+4. `rio` -- A package to help open and save projects and data.[@2021Chan-ri]
+5. `ggtext` -- Allows for Markdown and HTML rendering for ggplot2.[@2022Wilke-wt]
+6. `showtext` -- Allows for custom fonts in ggplot (such as Google Fonts).[@2022Qiu-px]
+7. `here` -- To easily find files and save files using the `here()` function.[@2020Müller-hr]
+8. `scales` -- This package is used to customise to control the appearance of axis and legend labels
+9. `janitor` -- Tools for examining and cleaning dirty data.[@2023Firke-jw]
+
+
+```{r, libs, message=FALSE, warning=FALSE}
+
+library(tidyverse)
+library(janitor)
+library(tidytuesdayR)
+library(camcorder)
+library(rio)
+library(showtext)
+library(ggtext)
+library(scales)
+library(geofacet)
+library(here)
+library(ggpath)
+library(magick)
+library(readr)
+library(glue)
+library(cowplot)
+####
+library(patchwork)
+library(cropcircles)
+
+```
+
+
+
+## Data
+
+
+```{r, data, message=FALSE, warning=FALSE}
+
+##  Using the TidyTuesday API ----
+
+# tuesdata <- tidytuesdayR::tt_load(2023, week = 25)
+
+# ufo_sightings <- tuesdata$`ufo_sightings`
+# 
+# places <- tuesdata$`places`
+# 
+# day_parts_map <- tuesdata$`day_parts_map`
+# 
+# export(ufo_sightings, file = "data/ufo_sightings.csv", format = "csv")
+# export(places, file = "data/places.csv", format = "csv")
+# export(day_parts_map, file = "data/day_parts_map.csv", format = "csv")
+
+
+## Direct Download from Github ----
+
+# ufo_sightings <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-06-20/ufo_sightings.csv") 
+# 
+# places <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-06-20/places.csv")
+# 
+# day_parts_map <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-06-20/day_parts_map.csv")
+
+## Data Source ----
+
+# https://github.com/rfordatascience/tidytuesday/blob/master/data/2023/2023-06-20/readme.md
+
+ufo_sightings <- read_csv("data/ufo_sightings.csv")
+
+places <- read_csv("data/places.csv")
+
+day_parts_map <- read_csv("data/day_parts_map.csv")  %>%
+  as_tibble()
+
+```
+
+## Viewing the Data
+
+```{r, view, message=FALSE, warning=FALSE}
+
+# View Data ----
+
+
+
+```
+
+# Color Palette
+
+For some reason, when we think of Aliens and UFOs we think of greens, shades of black and grey, silvery, and perhaps blues. Apart from the greens, I think these are colors that are friendly to those who are colorblind. I wanted to give it my own take and went hunting for a suitable palette. I found the following on Pintrest (shown by their HEX values): #b6f486,#88d4c3,#a8aedd,#8769b6,#400e63 colors.[^3] I may not use them all but we shall see.
+
+
+```{r, aes, message=FALSE, warning=FALSE}
+
+#  Plot Aesthetics ----
+
+bkgcol    <- "#FDFAF1"    # Background Color
+ttlcol    <- "#010101"    # Title color. I'm going with the dark purple.
+subttlcol <- "#010101"    # Subtitle color
+capcol    <- "#010101"    # Caption color
+txtcol    <- "#400E63"    # Text color
+# 
+alien     <- c("#400e63", "#532672", "#663e82", "#795691", "#8c6ea1", "#9f86b1") %>%
+  rev()
+
+# Modifications to 
+txt <- alien[1]
+accent <- txt
+
+
+```
+
+## Fonts
+
+Dan Ohem used the fonts **Barlow** and **Orbitron**. The Orbitron font in particular looks very space age. This is great, but I feel it is a bit too on the nose. I am comfortable with a more traditional looking font. When I was Googling around, I across **Michroma**, which may be a good substitute for Orbitron if you're looking for that. It has got that sans serif look and and spaced out in a way that looks a bit like glypphs punched out by some advanced computer. Another font, **Spectral**, may also be an option. However, **Spectral** is a serif font. There is also **Gruppo**, another san-serif font. However, I will go with **Raleway** and **Montserrat**. Both are sans-serif fonts, but the former looks to have a tighter knit, while Montserrat feels a bit more relaxed (the more dapper version of an Arial if you will).
+
+In previous projects, I have made use of the `str_glue()` function, which is a part of the `stringr` package in tidyverse. That function acts as wrapper giving you some of the basic functionality of concatenating strings. However, the actual glue package is more versatiel and useful for that. In this particularly exercise, I have chosen to use the glue package.
+
+
+```{r, fonts, warning=FALSE, message=FALSE}
+
+font_add("fa-brands", regular = "/Users/seyramb/Library/Fonts/Font Awesome 6 Brands-Regular-400.otf")
+
+font_add("fa-solid", regular = "/Users/seyramb/Library/Fonts/Font Awesome 6 Free-Solid-900.otf")
+
+font_add_google("Raleway", "ral")
+font_add_google("Montserrat", "mon")
+showtext_auto()
+
+ft <- "ral"
+ft1 <- "mon"
+
+# DEFINE CONTACT INFO SYMBOLS ----
+
+
+mt  <- glue("<span style='font-family:fa-brands; color:{txtcol}'>&#xf4f6;</span>") # Mastodon
+
+tw  <- glue("<span style='font-family:fa-brands; color:{txtcol}'>&#xf099;</span>") # Twitter
+
+gh  <- glue("<span style='font-family:fa-brands; color:{txtcol}'>&#xf09b;</span>") # Github
+
+
+space <- glue("<span style='color:{bkgcol};font-size:1px'>'</span>")
+
+space2 <- glue("<span style='color:{bkgcol}'>--</span>") # can't believe I'm doing this
+
+# cap_text <- glue("@butames@mastodon.cloud @butames butames/TidyTuesdaySABTools: #rstats #ggplot")
+
+cap_text <- glue("Code: {tw} @butames {gh} butames &bull; Tools: #rstats #ggplot")
+
+```
+
+## Data Wrangling
+
+One of the features of `R` I like, is that you can create objects out of anything, which can then read into another object. Be it an image, vector, or even another dataframe. In this case, I am attaching an image saved in R as the object **dfufo**. It is the silhouette of a UFO with lights. I am hoping to use it later in one of the plots I create, most likely a modified pie chart (this is inspired Dan Oehm). The image itself is from a website called OpenClipArt.[^2]
+
+I am trying to get into the habit of being strategic with my data cleaning and that means using functions that make my life easier. The `clean_name()` function from the **janitor** package, cleans up variable names when you import data (e.g., it will replace spaces with an "_" or remove special characters. Really anything that R struggles with. There isn't an equivalent of this function in dplyr. Typically, when you import the data with the problematic variable names, R will do its best to clean it up. You will then have to use the rename() function in **dplyr** to clean them up. The **janitor** packaage makes this process less cumbersome. The `clean_names()` function in janitor is more powerful than the `rename()` function in dplyr. The clean_names() function can automatically clean up column names, replacing spaces with underscores, converting to lowercase, and removing special characters).
+
+One thing about this process, is that I have learned to create and use functions in R. Or at least I know have a rudimentary knowledge of it. The below code snippet does the following:
+
+
+```
+sample_summary <- function(n) {
+  x <- ufo_sightings %>%
+    mutate(id = 1:n()) %>%
+    filter(str_length(summary) > 120) %>%
+    sample_n(n)
+  text <- x %>%
+    pull(summary) %>%
+    str_to_sentence()
+  list(
+    text = paste0('"...', text, '..."'),
+    id = x$id
+  )
+}
+```
+
+Another wonderful quality of R is that you can even create and store images in a data object. For example, below in the data object named df5ufo it contains three columns: **x**, **y**, and **image**. I downloaded a UFO silhoutte image, and I upload that into the dataframe using the written script. The **x** and **y** columns store the coordinates of the center of UFO image, and the image column stores the image itself.
+
+
+```{r, wrangle, message=FALSE, warning=FALSE}
+
+# PREPARE A SUBSAMPLES OF DATA ----
+
+# Create a dataframe with a subsample of data that sums the total population of each state using the total population of the towns/cities where the UFO was sighted.
+
+df1 <- places %>%
+  filter(country_code == "US") %>%
+  group_by(state) %>%
+  summarise(pop = sum(population)) %>%
+  ungroup()
+
+# RATE OF UFO SIGHTINGS  ----
+
+#  Create a dataframe that calculates the rate of sightngs in each state using the population of the sighting towns/cities as the denominator (df1).
+
+df2 <- ufo_sightings %>%
+  filter(country_code == "US") %>%
+  count(state) %>%
+  left_join(df1, by = "state") %>%
+  mutate(
+    r = n/pop*10000,
+    x = ((r - min(r))/(max(r) - min(r)) * (1 - 0.2) + 0.2),
+    xmin = (1-x)/2,
+    xmax = x + (1-x)/2,
+    alpha = r/max(r)
+    )
+
+# UFO SHAPE ----
+# Many UFO sightings account for a particular shape of the object (e.g., disc, orb, etc.).
+# We also want to limit this type of siting to the top 10 to create our plot.
+# This data will be used to create a horizontal bar chart.
+
+df3 <- ufo_sightings %>%
+  group_by(shape) %>%
+  summarise(numbers = n()) %>%
+  mutate(percent = (numbers / sum(numbers)*100), 
+         percent = round(percent, 2)) %>%
+  arrange(desc(numbers)) %>%
+  mutate(shape = ifelse(is.na(shape), "unknown", shape)) %>%
+  filter(!shape %in% c("unknown", "other")) %>%
+  slice_head(n=10) %>%
+  mutate(shape = as.character(shape),
+         shape = str_to_title(shape))
+
+# A note, I filter out the observations that correspond to an Unknown structure, or a structure that the sightee classified as "Other". I did this using the `filter()` function. Specifically, `filter(!shape %in% c("unknown", "other"))`. Just so you are aware, the %in% operator in R is used to check if a value is contained in a vector. So, the expression shape %in% c("unknown", "other") checks if the shape variable is contained in the vector c("unknown", "other"). If the shape variable is contained in the vector, then the condition is met and the row will be kept. If the shape variable is not contained in the vector, then the condition is not met and the row will be dropped.
+
+# I also used the `str_to_title()` to change the first letter of each word in the shape column to an uppercase. It makes for a plot labeling that is cleaner looking.
+
+
+# TIME OF DAY -SIGHTINGS
+# Time of day with the most sightings. First we create variables for the day of the week (shown as a string), for the day (shown as an integer running from 1 through 7), then for the hour of the day (also as an integer running from 0 through 23). Hence we are looking to generate a 
+
+df4 <- ufo_sightings %>%
+  mutate(
+    day = wday(reported_date_time),
+    hour = hour(reported_date_time),
+    wday = wday(reported_date_time, label = TRUE)
+  ) %>%
+  count(day, wday, hour) %>%
+  mutate(
+    alpha = n/max(n), # We create an alpha with which to color our chart.
+    hour_lab = case_when( # This particular variable is a label for the hour that intuitive and readable.
+      hour == 0 ~ "12am",
+      hour <= 12 ~ paste0(hour, "am"),
+      hour == 12 ~ "12pm",
+      TRUE ~ paste0(hour-12, "pm"))
+    )
+
+# OBJECT CONTAINING UFO SVG ----
+
+# I imported this image (it is a silhouette) from a free clip art website.
+# The below code is placing the image in a dataframe
+dfufo <- tibble(
+  x = 0,
+  y = -5,
+  image = image_read("img/ufo.svg") %>%
+    image_fill(color = "none", fuzz = 10) %>%
+    circle_crop()
+)
+
+# SAMPLE RANDOM DESCRIPTORS OF SIGHTINGS
+# In the original dataframe, there is a variable (i.e., **summary**) where they provide a descriptor of the sighting. For instance 
+
+sample_summary <- function(n) {
+  x <- ufo_sightings %>%
+    mutate(id = 1:n()) %>%
+    filter(str_length(summary) > 120) %>%
+    sample_n(n)
+  text <- x %>%
+    pull(summary) %>%
+    str_to_sentence()
+  list(
+    text = paste0('"...', text, '..."'),
+    id = x$id
+  )
+}
+
+quotes <- paste0('"...', str_to_sentence(ufo_sightings$summary[c(47816, 6795, 93833)]), '..."')
+
+```
+
+
+
+
+## HEX Tile Map
+
+Increasingly, I have been seeing the use of HEX tile maps or plots in data vizual documents, particularly when it comes to showing a map of continental USA, when your objective is not to worry about relief features or borders, that are typically the feature of a map visual. Maps are relevant because you want to show information about a physical area relative to another (e.g., where one city is relative to another city in terms of distance). However, you may simply want to allude to the notion of a map without having those kinds of features be central to what you are creating. For instance, you create a visual document, that shows some representation of each state with some data on it, but nothing else, other than the general positioning of the state. Hence the HEX tile map. In my experience it is somewhat straightforward in Tableau or Power BI. I have never attempted it in Looker Studio (i.e., Google's BI service). Anyway, there are different ways to create one in R, and the below is an approximation. 
+
+The main inspiration for this plot was the work of <a href="www.twitter.com/danoehm">Dan Oehm</a> on twitter.
+
+However, their approach to arrranging the different plots on the page, feels a bit complicated to me. I am going to try and duplicate their approach, but I will make use of the `cowplot` package. They used the `patchwork` package to achieve what I am attempting to do here.
+
+Making HEX tile map/ HEX bin map with `ggplot` can be challenging. However the `geofacet` package, helps you get around this process a bit easier.
+
+```{r, hexplot, message=FALSE, warning=FALSE}
+
+g_us <- df2 %>%
+  ggplot() +
+  geom_rect(aes(xmin = 0, xmax = 1, ymin = 0, ymax = 1, alpha = alpha), fill = accent) +
+  geom_text(aes(x=0.5, y=0.7, label = state), 
+            lineheight = 0.25, 
+            family = ft, 
+            size = 4, 
+            colour = bkgcol, 
+            fontface = "bold") +
+  geom_text(aes(x=0.5, y=0.3, label = round(r, 1)), 
+            lineheight = 0.25, 
+            family = ft, 
+            size = 2, 
+            colour = bkgcol, 
+            fontface = "bold") +
+  facet_geo(~state) +
+  scale_alpha_identity() +
+  coord_fixed() +
+  labs(subtitle = "UFO sightings per 10K of sighting cities") +
+  theme_void() +
+  theme(
+    strip.text = element_blank(),
+    plot.subtitle = element_text(family = ft1, 
+                                 size = 25, 
+                                 hjust = 1, 
+                                 colour = txt, 
+                                 margin = margin(b = 10)),
+    legend.position = "none"
+  )
+
+g_us
+
+```
+
+### Modified Pie Chart
+
+Pie charts are reviled who create professional data visual documents professionally. While visually appealing, they can be difficult to interpret particualrly when the data don't show wide variation. And there is wide variation in the categories, one option is to simply rely on a bar chart or a stacked bar chart. given this, move forward with using pie charts cautiously. 
+
+The package ggplot has a bit of a workaround for creating pie charts, which involves the use of the `coord_polar()` function. The `coord_polar()` is used in ggplot to create pie charts. It is a function that essentially modifies tiled plot, giving the aesthetic appearance of a pie chart. Similar to what happens when you use the cord_flip() function to turn a vertical bar chart into a horizontal bar chart. This is thanks to the work and insight of Dan Oshem. The `geom_tile()` function is what you will traditionally use to create heat map.
+
+
+
+```{r, pie, warning=FALSE, message=FALSE}
+
+
+g_day <- df4 %>%
+  ggplot() +
+  geom_tile(aes(x = hour, y = day, alpha = alpha), # Adds the labels for the time
+            fill = accent, 
+            height = 0.9, 
+            width = 0.9) +
+  geom_text(aes(hour, 9, label = hour_lab), 
+            colour = accent, 
+            family = ft, 
+            size   = 2) +
+  geom_text(aes(0, day, label = str_sub(wday, 1, 1)), # Adds the labels for the day
+            colour   = bkgcol,
+            family   = ft,
+            size     = 2) +
+  geom_from_path(aes(0, -5, path = image), # Adds the image
+                 dfufo,
+                 width = 0.25) +
+  scale_alpha_identity() +
+  coord_polar(theta = "x", start = 0, direction = 1) +
+  ylim(-4, 9) +
+  xlim(NA, 23.55) +
+  theme_minimal() +
+  theme(plot.background = element_rect(fill = bkgcol, colour = bkgcol)
+        )
+
+g_day
+
+```
+
+
+## Define Titles and Captions
+
+```{r, warning=FALSE, message=FALSE}
+
+ttl_text    <- glue("Most common UFO structures.") 
+sub_text    <- glue("Of the thousands of UFO sightings, these are the ten most common structures.") 
+
+```
+
+
+### Bar Chart
+
+My thought is that the code I am working on contains some redundancies or at least the configuration is not the way I would create plots (I am basing this off the work of Dan Oshem, who always does great work.). For creating bar charts, I prefer what I detail below. For instance, the creator (Dan Oshem), made use of the `geom_col` function, which creates a bar chart such that the bar heights or lengths (if looking at it horizontally) represent the absolute numbers. However, I prefer using the `geom_bar` which creates bars based on proportion It is a an easier way to interpret data visually, and for when you actually plot proportions. To do this, I created a proportion column (interpreted as percent values.)
+
+```{r, plot3, warning=FALSE, message=FALSE}
+
+# PLOT 3 - BAR CHART OF COMMONLY REPORTED STRUCTURES ----
+
+## Create the plot----
+pf3 <- df3 %>%
+  ggplot(aes(x = reorder(shape, percent), y = percent)) +
+  geom_bar(stat = "identity", fill = accent) +
+  geom_text(aes(label = percent), family = ft, position=position_stack(vjust=0.5)) +
+  
+  ## Change plot to horizontal ----
+  coord_flip(clip = "off") +
+  
+  ## Add labels to the plot----
+  labs(x = "",
+       y = "Percent of reported sightings (%)",
+       title = ttl_text,
+       subtitle = sub_text,
+       caption = cap_text) +
+  
+  ## Give the plot a theme ----
+  theme_minimal() +
+  theme(
+    plot.title.position = "plot",
+    plot.caption.position = "plot",
+    legend.position       = "none",
+    plot.background       = element_rect(fill = bkgcol, color = bkgcol),
+    panel.background      = element_rect(fill = bkgcol, color = bkgcol),
+    plot.margin           = margin(t = 10, b = 10, r = 10, l = 10),
+    axis.title.x          = element_text(size = 10, face = "bold", family = ft, color = txtcol, margin = margin(t=10)),
+    axis.title.y          = element_text(size = 10, face = "bold", family = ft, color = txtcol, margin = margin(t=10), hjust = 0.5),
+    axis.text.y           = element_text(size = 10, family = ft, color = txtcol, hjust = 0),
+    axis.line.x           = element_line(linetype = "solid", linewidth = 0.1, color = txtcol),
+    panel.grid.major.y    = element_line(linetype = "dotted", linewidth = 0.15, color = "#400E63"),
+    panel.grid.minor.y    = element_blank(),
+    panel.grid.major.x    = element_blank(),
+    panel.grid.minor.x    = element_blank(),
+    plot.title            = element_markdown(
+      family  = ft,
+      colour  = txtcol,
+      face    = "bold",
+      size    = 12,
+      hjust   = 0.5,
+      vjust   = 0.5
+    ),
+    plot.subtitle         = element_markdown(
+      family  = ft,
+      colour  = txtcol,
+      size    = 8,
+      hjust   = 0.5,
+      vjust   = 0.5
+    ),
+    plot.caption          = element_markdown(
+      family  = ft,
+      colour  = txtcol,
+      face    = "italic",
+      size    = 8,
+      hjust   = 0.5,
+      vjust   = 0.5
+    )
+  )
+
+## Display the plot----
+
+pf3
+
+```
+
+## Create Data Vizual
+
+With the above code, I have created a individual plots for what I want to show with the data. Now the job is to arrange it all on broad sheet. My
+
+```{r, message=FALSE, warning=FALSE}
+
+p1 <- plot_grid(g_us, g_day, labels = c("A", "B")) 
+
+p1
+
+```
+
+
+
+
+## Create Plots
+
+Using patchwork and cropcircles
+
+```{r, plots, message=FALSE, warning=FALSE}
+
+
+g_base <- ggplot() +
+  labs(
+    title = "UFO Sightings",
+    subtitle = "Summary of over 88k reported sightings across the US",
+    caption = cap_text
+    ) +
+  theme_void() +
+  theme(
+    text = element_text(family = ft, size = 48, lineheight = 0.3, colour = txt),
+    plot.background = element_rect(fill = bkgcol, colour = bkgcol),
+    plot.title = element_text(size = 128, face = "bold", hjust = 0.5, margin = margin(b = 10)),
+    plot.subtitle = element_text(family = ft1, hjust = 0.5, margin = margin(b = 20)),
+    plot.caption = element_markdown(family = ft1, colour = colorspace::darken(txt, 0.5), hjust = 0.5, margin = margin(t = 20)),
+    plot.margin = margin(b = 20, t = 50, r = 50, l = 50),
+    axis.text.x = element_text()
+  )
+quote1 <- ggplot() +
+  annotate("text", x = 0, y = 1, label = str_wrap(quotes[1], 40),
+           family = ft1, colour = txt, size = 16, hjust = 0, fontface = "italic", lineheight = 0.4) +
+  xlim(0, 1) +
+  ylim(0, 1) +
+  theme_void() +
+  coord_cartesian(clip = "off")
+
+quote2 <- ggplot() +
+  annotate("text", x = 0, y = 1, label = str_wrap(quotes[2], 25),
+           family = ft1, colour = txt, size = 16, hjust = 0, fontface = "italic", lineheight = 0.4) +
+  xlim(0, 1) +
+  ylim(0, 1) +
+  theme_void() +
+  coord_cartesian(clip = "off")
+
+quote3 <- ggplot() +
+  annotate("text", x = 0, y = 1, label = str_wrap(quotes[3], 25),
+           family = ft1, colour = txt, size = 16, hjust = 0, fontface = "italic", lineheight = 0.4) +
+  xlim(0, 1) +
+  ylim(0, 1) +
+  theme_void() +
+  coord_cartesian(clip = "off")
+
+g_final <- g_base +
+  inset_element(pf3, left = 0, right = 1, top = 1, bottom = 0.66) +
+  inset_element(g_us, left = 0.42, right = 1, top = 0.74, bottom = 0.33) +
+  inset_element(g_day, left = 0, right = 0.66, top = 0.4, bottom = 0) +
+  inset_element(quote1, left = 0.5, right = 1, top = 0.8, bottom = 0.72) +
+  inset_element(quote2, left = 0, right = 1, top = 0.52, bottom = 0.4) +
+  inset_element(quote3, left = 0.7, right = 1, top = 0.2, bottom = 0) +
+  plot_annotation(
+    theme = theme(
+      plot.background = element_rect(fill = bkgcol, colour = bkgcol)
+    )
+  )
+
+ggsave(plot = g_final, filename = "/Users/seyramb/Documents/GitHub/TidyTuesdaySAB/20230620TT/ufo.png", height = 16, width = 10)
+```
+
+
+## Image Source
+
+[^1]:<a href="https://en.wikipedia.org/wiki/McMinnville_UFO_photographs">Paul Trent, Public domain, via Wikimedia Commons</a>
+[^2]:<a href=“https://openclipart.org/detail/319710/ufo-silhouette”>UFO silhouette by  liftarn (uploaded on March 3, 2020)</a>
+[^3]: <a href="https://www.color-hex.com/color-palette/16419">ALIENS Color Palette by pastelpixelegg</a> 
+
