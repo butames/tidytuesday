@@ -11,8 +11,15 @@ This week we have data on US Polling Stations.
 2. {tidytuesdayR} -- Access 'TidyTuesday' Weekly Projects
 3. {tidyverse} --  A collection of open source packages for the R programming language
 4. {showtext} -- Using Fonts More Easily in R Graphs
+5. {sf} -- Support for simple features, a standardized way to encode spatial vector data
+6. {giscoR} -- An API package that helps to retrieve data from **Eurostat - GISCO (the Geographic Information System of the COmmission)**
 
+## Chart Types
 
+- The first chart I craeted is like a street sign. Ryan Heart suggests creating a modified version 
+  - Saved as *pollingstations21012024.png*
+
+- The second chart I created is a proportional symbol map of the polling locations in California during the November 03, 2020 elections.
 
 ## REFERENCES
 
@@ -20,6 +27,8 @@ This week we have data on US Polling Stations.
 - Hughes E, Harmon J, Mock T, R4DS Online Learning Community. Access the Weekly TidyTuesday Project Dataset (tidytuesday). tidytuesdayR. Published 2019. Accessed October 22, 2022. https://thebioengineer.github.io/tidytuesdayR/
 - Wickham H, Averick M, Bryan J, et al. Welcome to the Tidyverse. JOSS. 2019;4(43):1686. doi:10.21105/joss.01686
 - Qiu Y. yixuan/showtext. Published online January 20, 2024. Accessed January 21, 2024. https://github.com/yixuan/showtext
+- Pebesma E, Bivand R, Racine E, et al. sf: Simple Features for R. Published online December 18, 2023. Accessed January 21, 2024. https://cran.r-project.org/web/packages/sf/index.html
+- Hernangómez D. giscoR | R package for download geodata from GISCO - Eurostat. Published online 2023. Accessed January 21, 2024. https://ropengov.github.io/giscoR/
 
 
 

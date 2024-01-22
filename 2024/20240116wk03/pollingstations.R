@@ -1,27 +1,43 @@
+# -----------------------------------------------------------
+# Author:   Seyram A. Butame
+# Email:    butames@gmail.com
+# Date:     2024-01-21
+# Purpose:  TidyTuesday 2024 Week 03 (Based on Ryan Heart's work)
+# -----------------------------------------------------------
+
+## RELEVANT LIBRARIES -----------------------------------------------------
+
+# install.packages("ggchicklet", repos = "https://cinc.rud.is")
+
 library(tidytuesdayR)
 library(tidyverse)
 library(showtext)
 library(ggchicklet)
 # library(ggforce)
 
-# add font ----------------------------------------------------------------
+# ADD FONTS ----------------------------------------------------------------
 font_add_google(name = "Open Sans", family = "Open Sans")
 font <- "Open Sans"
 
 font_add_google(name = "Overpass", family = "Overpass")
 font_s <- "Overpass"
 
-# turn on showtext --------------------------------------------------------
+# TURN ON SHOWTEXT --------------------------------------------------------
 showtext_auto()
 showtext_opts(dpi = 320)
 
 options(scipen = 999) 
 
-# load data --------------------------------------------------------------
-tuesdata <- tidytuesdayR::tt_load('2024-01-16')
-polling_places <- tuesdata$polling_places
+# LOAD DATA --------------------------------------------------------------
 
-# wrangle data ------------------------------------------------------------
+# tuesdata <- tidytuesdayR::tt_load('2024-01-16')
+# polling_places <- tuesdata$polling_places %>%
+#   as_tibble() %>%
+#   write_csv(file = "data/polling_places.csv")
+
+polling_places <- read_csv("data/polling_places.csv")
+
+# WRANGLE DATA ------------------------------------------------------------
 df <- polling_places %>%
   filter(election_date == "2020-11-03") %>% 
   mutate(search_term = case_when(
@@ -41,7 +57,7 @@ df <- polling_places %>%
   na.omit()
 
 
-# wrangle data ------------------------------------------------------------
+# WRANGLE DATA II  ------------------------------------------------------------
 df_main <- polling_places %>%
   filter(election_date == "2020-11-03") %>% 
   mutate(search_term = case_when(grepl("Main\\ Street|Main\\ St|Main\\ Avenue|Main\\ Ave", address, ignore.case = TRUE) ~ "Main")) %>% 
@@ -49,7 +65,7 @@ df_main <- polling_places %>%
   summarize(count = n()) %>% 
   na.omit()
 
-# create plot -------------------------------------------------------------
+# CREATE PLOT ------------------------------------------------------------
 df %>% 
   ggplot(aes(y = count, x = reorder(search_term, count))) +
   geom_chicklet(fill = "#308446", color = "#000000", radius = grid::unit(1, "mm"), size = 0.35, width = 0.75) +
@@ -74,5 +90,9 @@ df %>%
     plot.background = element_rect(color = NA, fill = "#FFFFFF")
     ) +
   labs(caption = "#TidyTuesday | Data: The Center for Public Integrity | Design: Ryan Hart- Seyram A. Butame")
+
+## SAVE FILE ------------------------------------------------------------
+
+ggsave(paste0("pollingstations", format(Sys.time(), "%d%m%Y"), ".png"), dpi = 320, width = 6, height = 6)
   
 
