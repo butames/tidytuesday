@@ -12,7 +12,7 @@ This week we have data on US Polling Stations.
 3. {tidyverse} --  A collection of open source packages for the R programming language
 4. {showtext} -- Using Fonts More Easily in R Graphs
 5. {sf} -- Support for simple features, a standardized way to encode spatial vector data
-6. {giscoR} -- An API package that helps to retrieve data from **Eurostat - GISCO (the Geographic Information System of the COmmission)**
+6. {giscoR} -- An API package that helps to retrieve data from **Eurostat - GISCO (the Geographic Information System of the Commission)**
 
 ## Chart Types
 
@@ -20,6 +20,11 @@ This week we have data on US Polling Stations.
   - Saved as *pollingstations21012024.png*
 
 - The second chart I created is a proportional symbol map of the polling locations in California during the November 03, 2020 elections.
+
+## NOTES ON MAPPING
+
+**C**oordinate **R**eference **S**ystem (i.e., CRS). In layman's term, map projections try to transform the earth from its spherical shape (3D) to a planar shape (2D). A coordinate reference system (CRS) then defines how the two-dimensional, projected map in your GIS relates to real places on the earth. The .prj file normally contains the CRS for a shapefile.
+After doing some Google, I found that, projecting the polygon to **WGS84** works, especially when using the sf package. It is described as being more striaight forward than the {rgdal} package[^1].
 
 ## REFERENCES
 
@@ -31,6 +36,4 @@ This week we have data on US Polling Stations.
 - Hernangómez D. giscoR | R package for download geodata from GISCO - Eurostat. Published online 2023. Accessed January 21, 2024. https://ropengov.github.io/giscoR/
 
 
-
-
-Create a bubble map in R (An alternative name is a Proportional symbol map
+[^1]: [Stackoverflow - How to apply spatial polygons to leaflet map using](https://stackoverflow.com/questions/57223853/how-to-apply-spatial-polygons-to-leaflet-map-using-shp)
