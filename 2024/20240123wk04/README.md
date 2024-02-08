@@ -19,6 +19,10 @@ I used the following libraries for this project.
 
 - {showtext} -- Using Fonts More Easily in R Graph
 
+
+I used an chrome-based app called EyeDropper to figure out the colors used in the original chart created by the UK Office for National Statitiscs. Then I tried to eyeball the rest. The font was more guesswork and I chose to go with what looked visiually appealing to me. **Roboto** is a great straightforward San Serif font. 
+
+
 ## REFERENCES
 
 1. Hughes E, Harmon J, Mock T, Community ROL. tidytuesdayR: Access the Weekly “TidyTuesday” Project Dataset. Published online December 13, 2023. Accessed February 2, 2024. https://cran.r-project.org/web/packages/tidytuesdayR/index.html
