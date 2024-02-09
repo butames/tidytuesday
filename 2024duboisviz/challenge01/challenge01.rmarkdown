@@ -294,4 +294,5 @@ pop70_map+ legend2_plot + legend1_plot+ pop80_map + plot_layout(ncol = 2,nrow = 
 ```{r}
 #| eval: false
 ggsave("challenge01.png",bg="#e7d6c5",height = 8.8)
+
 ```
