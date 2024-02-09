@@ -49,10 +49,17 @@ textcl <- "#3e2b22"
 #SAira
 #Exo 2
 
-# PLOT MAP 
+# PLOT MAP ----------------------------------------------------------- 
 
 ggplot() + 
   geom_sf(
     data = gashp,
     color = "#b3cbdc")
 
+# CREATE LEGEND  ----------------------------------------------------------- 
+
+
+
+# SAVE MAP ----------------------------------------------------------- 
+
+ggsave(paste0("challenge01_", format(Sys.time(), "%d%m%Y"), ".png"), dpi = 320, width=11, height=8.5)

@@ -1,0 +1,27 @@
+---
+title: 'Challenge 01'
+subtitle: 'Welcome to the #DuboisChallenge2024 week 1'
+date: '2024-02-05'
+image: 'https://raw.githubusercontent.com/ajstarks/dubois-data-portraits/master/challenge/2024/challenge01/original-plate-06.jpg'
+image-alt: ''
+description: ''
+output: html_document
+execute: 
+   eval: true
+   message: false
+   warning: false
+   cache: true
+---
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
