@@ -13,6 +13,33 @@ For Challenge one we are supposed to recreate the plates that show the populatio
 - {ggtext} -- A {ggplot2} extension that enables the rendering of complex formatted plot labels (titles, subtitles, facet labels, axis labels, etc.).
 - {glue} -- Glue offers interpreted string literals that are small, fast, and dependency-free. Glue does this by embedding R expressions in curly braces.
 
+## LEARNED ITEMS
+
+I picked up on an interesting bit of code when using {stringr} the tidyverse package that manipulates strings or characters. In the data the variable *1870* there are values such as ">1000" and "2500 - 5000". I am attempting to split these characters so there is an upper limit and a lower limit. But first I have to remove the non letter characters (i.e., ">" and "-" as well as the space " ").
+
+I employed `mutate(data1870 = str_remove_all(data1870, "[>-]"))`. Which removes **all** the instances ">" and "-".
+
+Another note, when using the {sf} package, working on the dataframe during data wrangling. The conversion to a tibble (i.e., a form of a dataframe employed in the tidyverse) strips the special geospatial information that `st_as_sf()` had added, and ggplot2 uses that information to automatically find the geometry column. To solve this when creating your map plot it is best to specify **geometry** in the aes() function.
+
+Ultimately, I did not employ the `str_remove_all()` function, as it was not necessary. The data we were given was very clean, and I could simply use specific categories. However, I am preserving the code below for my future notes.
+
+```
+df3 <- gashp %>%
+  mutate(data1870 = str_remove_all(data1870, "[>-]")) %>%
+  mutate(data1880_p = str_remove_all(data1880_p, "[>-]")) %>%
+  separate_wider_regex(data1870, c(ll70 = ".*", " ", up70 = ".*")) %>%
+  separate_wider_regex(data1880_p, c(ll80 = ".*", " ", up80 = ".*")) %>%
+  mutate(ll70 = as.numeric(ll70),
+         up70 = as.numeric(up70),
+         ll80 = as.numeric(ll80),
+         up80 = as.numeric(up80)) %>%
+  replace(is.na(.), 0) %>%
+  rowwise() %>% 
+  mutate(mean70 = mean(up70, ll70),
+         mean80 = mean(up80, ll80)) %>%
+  arrange(mean70, mean80)
+```
+
 ## REFERENCE
 
 1. Hughes E, Scherer C, Karamanis G. camcorder: Record Your Plot History. Published online October 3, 2022. Accessed February 7, 2024. https://cran.r-project.org/web/packages/camcorder/index.html
