@@ -80,7 +80,8 @@ plt1 <- df1 %>%
   ) +
   scale_y_reverse(n.breaks = 4, position = 'right', labels=yy) +
   labs(title = "SLAVES AND FREE NEGROES.", 
-       subtitle  = "PERCENT \nOF \nFREE NEGROES") +
+       subtitle  = "PERCENT \nOF \nFREE NEGROES",
+       caption = "#DuBoisChallenge2024 | Challenge02 | by Seyram A. Butame",) +
   theme(panel.background = element_rect(fill = brwn),
         panel.grid = element_blank(),
         axis.title = element_blank(),
@@ -90,6 +91,7 @@ plt1 <- df1 %>%
         axis.text.x = element_text(size = 10),
         plot.title = element_text(hjust = .5, face = "bold", vjust = 3, size = 20),
         plot.subtitle = element_text(size= 8, hjust = 1.20, vjust = -1),
+        plot.caption = element_text(hjust = 0.5, vjust = -1, size = 8),
         plot.margin = margin(1.5, 4, 2, 4, "cm"), 
         axis.ticks.length.y.left = unit(.7, "cm"),
         axis.ticks.length.y.right = unit(.7, "cm"),
