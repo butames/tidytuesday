@@ -15,12 +15,14 @@ This year the theme for the challenge will be organized around the colors of the
 
 ### Challenge 01 - Negro Population of Georgia by Counties, 1870, 1880 (plate 06), February 5
 
-![Challenge 01](/Users/seyramb/Documents/GitHub/tidytuesday/2024duboisviz/challenge01/challenge01_12022024.png)
+![Challenge 01](https://raw.githubusercontent.com/butames/tidytuesday/main/2024duboisviz/challenge01/challenge01_12022024.png)
 
 ## Challenge 02 - Slave and Free Negroes (plate 12), February 12
 
-![Challenge 02](/Users/seyramb/Documents/GitHub/tidytuesday/2024duboisviz/challenge02/challenge02_15022024.png)
+![Challenge 02](https://raw.githubusercontent.com/butames/tidytuesday/main/2024duboisviz/challenge02/challenge02_15022024.png)
 
 ## Challenge 03 - challenge03: Acres of Land Owned by Negroes in Georgia (plate 19), February 19
+
+
 
 Source: https://github.com/ajstarks/dubois-data-portraits/tree/master/challenge/2024
