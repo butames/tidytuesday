@@ -11,9 +11,16 @@ Note that for 2024, the challenge will occur on X (formally Twitter), Data Visua
 ## The Challenges
 This year the theme for the challenge will be organized around the colors of the Pan African flag: Challenges 1-3: red, Challenges 4-6: black, Challenges 7-9: green, Challenge 10: a combination.
 
-Red
-- challenge01: Negro Population of Georgia by Counties, 1870, 1880 (plate 06), February 5
-- challenge02: Slave and Free Negroes (plate 12), February 12
-- challenge03: Acres of Land Owned by Negroes in Georgia (plate 19), February 19
+## Red Challenge
+
+### Challenge 01 - Negro Population of Georgia by Counties, 1870, 1880 (plate 06), February 5
+
+![Challenge 01](/Users/seyramb/Documents/GitHub/tidytuesday/2024duboisviz/challenge01/challenge01_12022024.png)
+
+## Challenge 02 - Slave and Free Negroes (plate 12), February 12
+
+![Challenge 02](/Users/seyramb/Documents/GitHub/tidytuesday/2024duboisviz/challenge02/challenge02_15022024.png)
+
+## Challenge 03 - challenge03: Acres of Land Owned by Negroes in Georgia (plate 19), February 19
 
 Source: https://github.com/ajstarks/dubois-data-portraits/tree/master/challenge/2024
