@@ -376,6 +376,11 @@ set of functions</p></li>
 <li><p>{gtExtras} – A package that extends the {gt} package to aid in
 the creation of HTML tables.</p></li>
 </ul>
+<p>It recently came to my attention that you can just use the {pacman}
+package to load multiple libraries. The process would look like
+<code>pacman::p_load(tidytuesdayR, tidyverse, ggtext, showtext, janitor)</code>,
+rather than using library() function. Just something to think about when
+it comes to workflow.</p>
 </div>
 <div id="chart-type" class="section level2">
 <h2>CHART TYPE</h2>

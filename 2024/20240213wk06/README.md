@@ -18,9 +18,13 @@ This week we are using Valentin's Day Consumer Data from the National Retail Fed
 - {gtExtras} -- A package that extends the {gt} package to aid in the creation of HTML tables.
 
 
+It recently came to my attention that you can just use the {pacman} package to load multiple libraries. The process would look like `pacman::p_load(tidytuesdayR, tidyverse, ggtext, showtext, janitor)`, rather than using library() function. Just something to think about when it comes to workflow.
+
 ## CHART TYPE
 
-??
+I saw a rather pretty stream plot and I want to try my hands at it. I have seen streamplots often in glossy magazines and journals. They are often elegant and quite captiavating, the way the colors blend together. However, I have sometimes confused them with area plots. But this weak of tidytuesday, I saw a couple of great looking submssions and I want to try my hand at it.
+
+
 
 ## REFERENCES
 
