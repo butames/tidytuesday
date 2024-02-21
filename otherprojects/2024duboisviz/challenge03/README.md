@@ -21,3 +21,7 @@ An interesting exercise for this week. I am going to argue that this is a horizo
 4. Qiu Y. showtext. Published online January 20, 2024. Accessed January 21, 2024. https://github.com/yixuan/showtext
 5. Wickham H, RStudio. tidyverse: Easily Install and Load the “Tidyverse.” Published online February 22, 2023. Accessed February 2, 2024. https://cran.r-project.org/web/packages/tidyverse/index.html
 7. Wilke CO, Wiernik BM. ggtext: Improved Text Rendering Support for “ggplot2.” Published online September 16, 2022. Accessed January 26, 2024. https://cran.r-project.org/web/packages/ggtext/index.html
+
+## COMPARISON
+
+![plate-19](https://github.com/butames/tidytuesday/blob/main/otherprojects/2024duboisviz/challenge03/img/original-plate-19.jpg) ![plate-recreation](https://github.com/butames/tidytuesday/blob/main/otherprojects/2024duboisviz/challenge03/img/original-plate-19.jpg)
