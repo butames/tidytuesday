@@ -21,7 +21,7 @@ This year the theme for the challenge will be organized around the colors of the
 
 ![Challenge 02](https://raw.githubusercontent.com/butames/tidytuesday/main/otherprojects/2024duboisviz/challenge02/challenge02_15022024.png)
 
-## Challenge 03 - challenge03: Acres of Land Owned by Negroes in Georgia (plate 19), February 19
+## Challenge 03 - Acres of Land Owned by Negroes in Georgia (plate 19), February 19
 
 ![Challenge 03](https://github.com/butames/tidytuesday/blob/main/otherprojects/2024duboisviz/challenge03/challenge03_23022024.png)
 
