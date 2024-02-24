@@ -120,12 +120,7 @@ caption_text  <- str_glue("{tt} Visualization: {X} @sponce1 &bull; {mn} @sponce1
 
 
 ### |-  fonts ----
-font_add('fa6-brands', 'fonts/6.4.2/Font Awesome 6 Brands-Regular-400.otf') 
-font_add_google("Dancing Script", family = "title")                            
-font_add_google("Barlow Condensed", family = "subtitle")   
-font_add_google("Barlow Condensed", family = "text")  
-font_add_google("Roboto Condensed", family = "caption")
-showtext_auto(enable = TRUE)  
+z  
 
 ### |-  plot theme ----
 theme_set(theme_minimal(base_size = 12, base_family = "text"))                

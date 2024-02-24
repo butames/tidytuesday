@@ -13,6 +13,15 @@
 
 An interesting exercise for this week. I am going to argue that this is a horizontal barchart, and work from there. The difficult part will be getting the bar width correct (or as close as possible).
 
+- I made use of the {colorspace} package. This is a new one, I had not been exposed to before. You can make adjustments to the way a color is displaced. For example, the code below takes the color #EFE3D7 (a light brown) and darkens it by 35%, resulting in a lighter shade of the same color.
+
+```
+colorspace::darken("#EFE3D7", 0.35)
+
+```
+
+- Another thing I have been experimenting with. Define the theme for your plot globally before creating the plot. This goes along with breaking down the steps for the viz into components, as opposed to a long wall of code. It makes it easier to understand, when you come back later. Moreover, you can make tweaks to certain areas of the code without struggling to find where you have made errors.
+
 
 ## REFERENCES
 
