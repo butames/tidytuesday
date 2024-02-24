@@ -33,4 +33,4 @@ colorspace::darken("#EFE3D7", 0.35)
 
 ## COMPARISON
 
-![plate-19](https://github.com/butames/tidytuesday/blob/main/otherprojects/2024duboisviz/challenge03/img/original-plate-19.jpg) ![plate-recreation](https://github.com/butames/tidytuesday/blob/main/otherprojects/2024duboisviz/challenge03/img/original-plate-19.jpg)
+![plate-19](https://github.com/butames/tidytuesday/blob/main/otherprojects/2024duboisviz/challenge03/img/original-plate-19.jpg) ![plate-recreation](https://github.com/butames/tidytuesday/blob/main/otherprojects/2024duboisviz/challenge03/challenge03_23022024.png)
