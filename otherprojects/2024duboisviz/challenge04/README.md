@@ -16,7 +16,7 @@ This one will prove to be a bit difficult. I struggle to use the {sf} package. M
 
 
 <table><tr>
-<td> <img src="https://github.com/butames/tidytuesday/blob/main/otherprojects/2024duboisviz/challenge03/challenge03_23022024.png" alt="Dubois Plate 01" style="width: 250px;"/> </td>
+<td> <img src="https://github.com/butames/tidytuesday/blob/main/otherprojects/2024duboisviz/challenge04/img/original-plate-01.jpg" alt="Dubois Plate 01" style="width: 250px;"/> </td>
 <td> <img src="Nordic_trails.jpg" alt="Recreation Dubois Plate 01" style="width: 250px;"/> </td>
 </tr></table>
 
