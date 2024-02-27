@@ -1,4 +1,4 @@
-# TidyTuesday 2024 - Week 06
+# TidyTuesday 2024 - Week 07
 
 This week we are using Valentin's Day Consumer Data from the National Retail Federation Valentine's Day Data Center.
 
