@@ -24,8 +24,15 @@ The [TidyTuesday Challenge](https://github.com/rfordatascience/tidytuesday) prod
   <summary>TidyTuesday Attempts/ Contributions (click to expand)</summary>
 
 <!-- toc -->
-* **Challenges 2024**
-  * Week 04 [🎓 UK Education](https://github.com/imagineazhar/TidyTuesday/tree/main/2024/week04)
-  * Week 08 [🤑 ISC Grants](https://github.com/imagineazhar/TidyTuesday/tree/main/2024/2024-02-24)
+* **2024 CHALLENGES **
+
+  - Week 04 [🎓 Educational attainment of young people in English towns](https://github.com/butames/tidytuesday/tree/main/2024/20240123wk04)
+
+  - Week 08 [💰 R Consortium ISC Grants](https://github.com/butames/tidytuesday/tree/main/2024/20240220wk08)
   
 <!-- tocstop -->
+</details>
+
+### 2024, Week 08 [💰 R Consortium ISC Grants](https://github.com/butames/tidytuesday/tree/main/2024/20240220wk08)
+
+![💰 R Consortium ISC Grants](https://github.com/butames/tidytuesday/blob/main/2024/20240123wk04/barchart06022024.png)
