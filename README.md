@@ -24,7 +24,8 @@ The [TidyTuesday Challenge](https://github.com/rfordatascience/tidytuesday) prod
   <summary>TidyTuesday Attempts/ Contributions (click to expand)</summary>
 
 <!-- toc -->
-* **2024 CHALLENGES **
+
+-	**2024 CHALLENGES**
 
   - Week 04 [🎓 Educational attainment of young people in English towns](https://github.com/butames/tidytuesday/tree/main/2024/20240123wk04)
 
