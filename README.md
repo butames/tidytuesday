@@ -8,8 +8,8 @@ This repository presents an opportunity to play around with TidyTuesday data and
     
 &nbsp;&nbsp;&nbsp;
 
-[![GitHub Badge](https://img.shields.io/badge/Medium-12100E?style=for-the-badge&logo=medium&logoColor=white)](https://github.com/butames)
-[![Mastodon Badge](https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white)](https://mastodon.cloud/@butames)
+[![GitHub Badge](https://img.shields.io/badge/Github-171515?style=for-the-badge&logo=medium&logoColor=white)](https://github.com/butames)
+[![Mastodon Badge](https://img.shields.io/badge/Mastodon-563ACC?style=for-the-badge&logo=gmail&logoColor=white)](https://mastodon.cloud/@butames)
 [![Linkedin Badge](https://img.shields.io/badge/linkedin-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/butames)
 [![Twitter Badge](https://img.shields.io/badge/twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/butames)
 
