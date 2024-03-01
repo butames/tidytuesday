@@ -18,3 +18,14 @@ The [TidyTuesday Challenge](https://github.com/rfordatascience/tidytuesday) prod
 [![X Badge](https://img.shields.io/badge/x-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/butames)
 
 </div>
+
+
+<details>
+  <summary>TidyTuesday Attempts/ Contributions (click to expand)</summary>
+
+<!-- toc -->
+* **Challenges 2024**
+  * Week 04 [🎓 UK Education](https://github.com/imagineazhar/TidyTuesday/tree/main/2024/week04)
+  * Week 08 [🤑 ISC Grants](https://github.com/imagineazhar/TidyTuesday/tree/main/2024/2024-02-24)
+  
+<!-- tocstop -->
