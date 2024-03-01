@@ -31,8 +31,23 @@ The [TidyTuesday Challenge](https://github.com/rfordatascience/tidytuesday) prod
   - Week 08 [💰 R Consortium ISC Grants](https://github.com/butames/tidytuesday/tree/main/2024/20240220wk08)
   
 <!-- tocstop -->
+
 </details>
 
-### 2024, Week 08 [💰 R Consortium ISC Grants](https://github.com/butames/tidytuesday/tree/main/2024/20240220wk08)
+### 2024 - Week 01
+
+### 2024 - Week 02
+
+### 2024 - Week 03
+
+### 2024 - Week 04 [🎓 Educational attainment of young people in English towns](https://github.com/butames/tidytuesday/tree/main/2024/20240123wk04)
+
+### 2024 - Week 05
+
+### 2024 - Week 06
+
+### 2024 - Week 07
+
+### 2024 - Week 08 [💰 R Consortium ISC Grants](https://github.com/butames/tidytuesday/tree/main/2024/20240220wk08)
 
 ![💰 R Consortium ISC Grants](https://github.com/butames/tidytuesday/blob/main/2024/20240123wk04/barchart06022024.png)
