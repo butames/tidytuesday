@@ -8,9 +8,9 @@ This repository presents an opportunity to play around with TidyTuesday data and
     
 &nbsp;&nbsp;&nbsp;
 
-[![GitHub Badge](https://img.shields.io/badge/github-181717?style=for-the-badge&logo=medium&logoColor=white)](https://github.com/butames)
-[![Mastodon Badge](https://img.shields.io/badge/mastodon-6364FF?style=for-the-badge&logo=gmail&logoColor=white)](https://mastodon.cloud/@butames)
+[![GitHub Badge](https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/butames)
+[![Mastodon Badge](https://img.shields.io/badge/mastodon-6364FF?style=for-the-badge&logo=mastodon&logoColor=white)](https://mastodon.cloud/@butames)
 [![Linkedin Badge](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/butames)
-[![X Badge](https://img.shields.io/badge/x-000000?style=for-the-badge&logo=twitter&logoColor=white)](https://x.com/butames)
+[![X Badge](https://img.shields.io/badge/x-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/butames)
 
 </div>
