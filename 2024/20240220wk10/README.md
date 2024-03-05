@@ -13,9 +13,9 @@
 
 </div>
 
-<p>
+
 This week we are using the **Trash Wheel Collection Data** sourced from the [Health Harbor Trash Wheel Data Collection Program](https://docs.google.com/spreadsheets/d/1b8Lbe-z3PNb3H8nSsSjrwK2B0ReAblL2/edit#gid=1143432795)
-</p>
+
 
 A code snippet for creating a gif using the `gg_playback()` function from the `{camcorder}` package.
 ```
