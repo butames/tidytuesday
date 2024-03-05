@@ -49,9 +49,5 @@ gg_playback(
 6. Hester J, Bryan J, Software P, PBC. glue: Interpreted String Literals. Published online January 9, 2024. Accessed January 26, 2024. https://cran.r-project.org/web/packages/glue/index.html
 7. Hughes E, Scherer C, Karamanis G. camcorder: Record Your Plot History. Published online October 3, 2022. Accessed February 7, 2024. https://cran.r-project.org/web/packages/camcorder/index.html
 
-
-
-```
-
-```
-
+### Trash Wheel Collection Data - TidyTuesda Week 10
+![♻️ Trash Wheel Collection](https://github.com/butames/tidytuesday/blob/main/2024/20240123wk10/barchart06032024.png)
