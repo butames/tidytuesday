@@ -9,7 +9,7 @@
 [![GitHub Badge](https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/butames)
 [![Mastodon Badge](https://img.shields.io/badge/mastodon-6364FF?style=for-the-badge&logo=mastodon&logoColor=white)](https://mastodon.cloud/@butames)
 [![Linkedin Badge](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/butames)
-[![X Badge](https://img.shields.io/badge/x-000000?style=for-the-badge&logo=X/Twitter&logoColor=white)](https://twitter.com/butames)
+[![X Badge](https://img.shields.io/badge/x-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/butames)
 
 </div>
 
@@ -18,6 +18,7 @@ This week we are using the **Trash Wheel Collection Data** sourced from the [Hea
 
 
 A code snippet for creating a gif using the `gg_playback()` function from the `{camcorder}` package.
+
 ```
 gg_playback(
   name = file.path("2024", "2024-02-20", paste0("20240220", ".gif")),
