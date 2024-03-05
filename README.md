@@ -22,7 +22,7 @@ The [TidyTuesday Challenge](https://github.com/rfordatascience/tidytuesday) prod
 
 <details>
   <summary>TidyTuesday Attempts/ Contributions (click to expand)</summary>
-
+ 
 <!-- toc -->
 
 -	**2024 CHALLENGES**
