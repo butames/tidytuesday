@@ -145,7 +145,7 @@ theme_update(
   panel.grid.major.y = element_blank(),
   panel.grid.minor.x = element_blank(),
   panel.grid.major.x = element_blank(),
-  #plot.margin = margin(t = 10, r = 10, b = 10, l = 10),
+  plot.margin = margin(t = 10, r = 10, b = 10, l = 10),
   plot.background = element_rect(fill = bkgcol, color = bkgcol),
   panel.background = element_rect(fill = bkgcol, color = bkgcol)
 )
