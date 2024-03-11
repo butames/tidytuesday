@@ -108,192 +108,501 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<section id="prep" class="level2">
-<h2 class="anchored" data-anchor-id="prep">PREP</h2>
+<section id="chart-type" class="level2">
+<h2 class="anchored" data-anchor-id="chart-type">Chart Type</h2>
+<p>I wanted to create a <em>waffle chart</em> in the style of <a href="https://github.com/doehm/ggbrick">Dan Oehm’s package called <code>{ggbrick}</code></a>. An alternative to the Ohem’s package is the {waffle} package in CRAN. That package has more versatility, in the sense that you can use different icons (the kind you could get from font-awesome). However, Oehm’s package, generates the brick wall aesthetic. ## Load Library</p>
+<p>Note that you can also use the <code>p_load()</code> function from the <code>{pacman}</code> function to load several libraries, without having to use the <code>library()</code> function formulation from base R. For example, the following <code>p_load(request, install = TRUE, update = TRUE)</code> will install, update, and load the package called <code>{request}</code></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pressure)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidytuesdayR)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(showtext)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggtext)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(camcorder)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glue)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># devtools::install_github("doehm/ggbrick")</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggbrick)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="load-data" class="level2">
+<h2 class="anchored" data-anchor-id="load-data">Load Data</h2>
+<p>This week we are working with <a href="https://github.com/rfordatascience/tidytuesday/blob/master/data/2024/2024-03-05/readme.md">Trash Wheel Collection Data</a> from the <a href="https://github.com/rfordatascience/tidytuesday">TidyTuesday Program, week 10</a>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tuesdata &lt;- tt_load(2024, week = 10)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># trashwheel &lt;- tuesdata$trashwheel %&gt;%</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   clean_names() %&gt;%</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   write_csv("data/trashwheel.csv")</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>trashwheel <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/trashwheel.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="examine-data" class="level2">
+<h2 class="anchored" data-anchor-id="examine-data">EXAMINE DATA</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>examdt <span class="ot">&lt;-</span> <span class="fu">skim</span>(trashwheel)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>examdt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="20240305wk10_files/figure-html/prep-1.png" class="img-fluid" width="672"></p>
+<table class="table table-sm table-striped small">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">trashwheel</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">993</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">character</td>
+<td style="text-align: left;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 13%">
+<col style="width: 19%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 12%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+<th style="text-align: right;">empty</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">name</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">month</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">date</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">623</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="table table-sm table-striped small">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 9%">
+<col style="width: 13%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 8%">
+<col style="width: 9%">
+<col style="width: 5%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">dumpster</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">230.88</td>
+<td style="text-align: right;">185.82</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">73.00</td>
+<td style="text-align: right;">176.00</td>
+<td style="text-align: right;">381.00</td>
+<td style="text-align: right;">629.00</td>
+<td style="text-align: left;">▇▅▂▂▂</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">year</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2019.57</td>
+<td style="text-align: right;">2.75</td>
+<td style="text-align: right;">2014.00</td>
+<td style="text-align: right;">2018.00</td>
+<td style="text-align: right;">2020.00</td>
+<td style="text-align: right;">2022.00</td>
+<td style="text-align: right;">2023.00</td>
+<td style="text-align: left;">▃▃▅▆▇</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">weight</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.97</td>
+<td style="text-align: right;">0.84</td>
+<td style="text-align: right;">0.61</td>
+<td style="text-align: right;">2.45</td>
+<td style="text-align: right;">3.04</td>
+<td style="text-align: right;">3.53</td>
+<td style="text-align: right;">5.62</td>
+<td style="text-align: left;">▁▅▇▃▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">volume</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">14.92</td>
+<td style="text-align: right;">1.61</td>
+<td style="text-align: right;">5.00</td>
+<td style="text-align: right;">15.00</td>
+<td style="text-align: right;">15.00</td>
+<td style="text-align: right;">15.00</td>
+<td style="text-align: right;">20.00</td>
+<td style="text-align: left;">▁▁▁▇▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">plastic_bottles</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2219.33</td>
+<td style="text-align: right;">1650.45</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">987.50</td>
+<td style="text-align: right;">1900.00</td>
+<td style="text-align: right;">2900.00</td>
+<td style="text-align: right;">9830.00</td>
+<td style="text-align: left;">▇▆▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">polystyrene</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">1436.87</td>
+<td style="text-align: right;">1832.43</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">240.00</td>
+<td style="text-align: right;">750.00</td>
+<td style="text-align: right;">2130.00</td>
+<td style="text-align: right;">11528.00</td>
+<td style="text-align: left;">▇▂▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">cigarette_butts</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">13728.12</td>
+<td style="text-align: right;">24049.61</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">2900.00</td>
+<td style="text-align: right;">4900.00</td>
+<td style="text-align: right;">12000.00</td>
+<td style="text-align: right;">310000.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">glass_bottles</td>
+<td style="text-align: right;">251</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">20.96</td>
+<td style="text-align: right;">15.26</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">10.00</td>
+<td style="text-align: right;">18.00</td>
+<td style="text-align: right;">28.00</td>
+<td style="text-align: right;">110.00</td>
+<td style="text-align: left;">▇▃▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">plastic_bags</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">984.00</td>
+<td style="text-align: right;">1412.34</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">240.00</td>
+<td style="text-align: right;">540.00</td>
+<td style="text-align: right;">1210.00</td>
+<td style="text-align: right;">13450.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">wrappers</td>
+<td style="text-align: right;">144</td>
+<td style="text-align: right;">0.85</td>
+<td style="text-align: right;">2238.76</td>
+<td style="text-align: right;">2712.85</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">880.00</td>
+<td style="text-align: right;">1400.00</td>
+<td style="text-align: right;">2490.00</td>
+<td style="text-align: right;">20100.00</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">sports_balls</td>
+<td style="text-align: right;">364</td>
+<td style="text-align: right;">0.63</td>
+<td style="text-align: right;">13.59</td>
+<td style="text-align: right;">9.74</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">6.00</td>
+<td style="text-align: right;">12.00</td>
+<td style="text-align: right;">20.00</td>
+<td style="text-align: right;">56.00</td>
+<td style="text-align: left;">▇▆▂▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">homes_powered</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">45.85</td>
+<td style="text-align: right;">18.23</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">38.00</td>
+<td style="text-align: right;">49.00</td>
+<td style="text-align: right;">58.00</td>
+<td style="text-align: right;">94.00</td>
+<td style="text-align: left;">▂▂▇▅▁</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
-<pre><code># Load packages -----------------------------------------------------------
-
-library(tidyverse)
-library(showtext)
-library(camcorder)
-library(ggtext)
-library(nrBrand)
-library(glue)
-library(waffle)
-
-
-# Load data ---------------------------------------------------------------
-
-tuesdata &lt;- tidytuesdayR::tt_load("2024-03-05")
-trashwheel &lt;- tuesdata$trashwheel
-
-
-# Load fonts --------------------------------------------------------------
-
-font_add_google("Roboto", "roboto")
-font_add_google("Roboto Slab", "roboto_slab")
-sysfonts::font_add(
-  family = "Font Awesome 6",
-  regular = "2024/2024-03-05/Font Awesome 6 Free-Solid-900.otf"
-)
-showtext_auto()
-
-
-# Define colours and fonts-------------------------------------------------
-
-bg_col &lt;- "#fafafa"
-text_col &lt;- "black"
-col_palette &lt;- rcartocolor::carto_pal(length(unique(trashwheel$Name)) + 1, "Vivid")[1:length(unique(trashwheel$Name))]
-names(col_palette) &lt;- unique(trashwheel$Name)
-highlight_col &lt;- col_palette[1]
-
-body_font &lt;- "roboto"
-title_font &lt;- "roboto_slab"
-
-
-# Data wrangling ----------------------------------------------------------
-
-plot_data &lt;- trashwheel |&gt;
-  group_by(Year, Name) |&gt;
-  summarise(HomesPowered = round(sum(HomesPowered) / 100)) |&gt;
-  ungroup() |&gt;
-  drop_na() |&gt;
-  filter(HomesPowered != 0) |&gt; 
-  mutate(Name = factor(
-    Name, levels = c(
-      "Mister Trash Wheel", "Professor Trash Wheel",
-      "Captain Trash Wheel", "Gwynnda Trash Wheel"
-    )
-  )) |&gt; 
-  arrange(Name)
-
-
-# Start recording ---------------------------------------------------------
-
-gg_record(
-  dir = file.path("2024", "2024-03-05", "recording"),
-  device = "png",
-  width = 7,
-  height = 5,
-  units = "in",
-  dpi = 300
-)
-
-
-# Define text -------------------------------------------------------------
-
-social &lt;- nrBrand::social_caption(
-  bg_colour = bg_col,
-  icon_colour = highlight_col,
-  font_colour = text_col,
-  font_family = body_font
-)
-title &lt;- "Over 45,000 homes powered by trash"
-st &lt;- glue("The Healthy Harbor initiative has four Trash Wheels collecting trash.
-Trash Wheels are semi-autonomous trash interceptors that are placed at the end
-of rivers, streams or other outfalls. Far too lazy to chase trash around the
-ocean, Trash Wheels stay put and wait for the waste to flow to them. Sustainably
-powered and built to withstand the biggest storms, Trash Wheels use a unique
-blend of solar and hydro power to pull hundreds of tons of trash out of the
-water each year. 
-&lt;span style='color: {col_palette['Mister Trash Wheel']};'&gt;Mister Trash Wheel&lt;/span&gt; 
-was the first to start, and since then three more have joined the family: 
-&lt;span style='color: {col_palette['Professor Trash Wheel']};'&gt;Professor Trash Wheel&lt;/span&gt;, 
-&lt;span style='color: {col_palette['Captain Trash Wheel']};'&gt;Captain Trash Wheel&lt;/span&gt;, and
-&lt;span style='color: {col_palette['Gwynnda Trash Wheel']};'&gt;Gwynnda Trash Wheel&lt;/span&gt;.")
-cap &lt;- paste0(
-  st,
-  "&lt;br&gt;&lt;br&gt;**Data**: Mr. Trash Wheel Baltimore Healthy Harbor&lt;br&gt;**Graphic**: ", social
-)
-
-
-# Plot --------------------------------------------------------------------
-
-ggplot(data = plot_data) +
-  geom_pictogram(
-    mapping = aes(
-      label = Name, colour = Name, values = HomesPowered
-    ),
-    flip = TRUE,
-    n_rows = 5,
-    size = 7,
-    family = "Font Awesome 6"
-  ) +
-  scale_label_pictogram(
-    name = NULL,
-    values = c("home", "home", "home", "home")
-  ) +
-  scale_colour_manual(
-    values = col_palette,
-    breaks = c(
-      "Mister Trash Wheel", "Professor Trash Wheel",
-      "Captain Trash Wheel", "Gwynnda Trash Wheel"
-    )
-  ) +
-  scale_x_discrete(
-    expand = c(0, 0, 0, 0)
-  ) +
-  scale_y_continuous(
-    labels = function(x) format(x * 5 * 100, big.mark = ","),
-    expand = c(0, 0),
-    breaks = c(0, 5, 10, 15, 20),
-    limits = c(0, 20),
-    minor_breaks = NULL
-  ) +
-  facet_wrap(~Year, nrow = 1, strip.position = "bottom") +
-  labs(
-    title = title,
-    subtitle = cap
-  ) +
-  coord_fixed() +
-  theme_minimal(
-    base_family = body_font,
-    base_size = 26
-  ) +
-  theme(
-    legend.position = "none",
-    plot.title.position = "plot",
-    plot.margin = margin(5, 15, 5, 15),
-    plot.background = element_rect(fill = bg_col, colour = bg_col),
-    panel.background = element_rect(fill = bg_col, colour = bg_col),
-    panel.grid.major = element_line(
-      linewidth = 0.4
-    ),
-    plot.title = element_textbox_simple(
-      colour = text_col,
-      hjust = 0,
-      halign = 0,
-      margin = margin(b = 10, t = 10),
-      lineheight = 0.5,
-      face = "bold",
-      size = rel(1.8),
-      family = title_font
-    ),
-    plot.subtitle = element_textbox_simple(
-      colour = text_col,
-      hjust = 0,
-      halign = 0,
-      margin = margin(b = 20, t = 10),
-      lineheight = 0.5,
-      family = body_font
-    )
-  )
-
-
-# Save gif ----------------------------------------------------------------
-
-gg_playback(
-  name = file.path("2024", "2024-03-05", paste0("20240305", ".gif")),
-  first_image_duration = 4,
-  last_image_duration = 20,
-  frame_duration = .25,
-  background = bg_col
-)</code></pre>
+</section>
+<section id="set-text-resolution" class="level2">
+<h2 class="anchored" data-anchor-id="set-text-resolution">SET TEXT RESOLUTION</h2>
+<p>This is an important step when using the <code>{showtext}</code> package (i.e., using the <code>showtext_auto()</code> function). Fortunately you only have to do it once, but if you don’t your fonts will not load in the document. The <code>showtext_opts()</code> sets characteristics of the font you are suing such as specifying the <strong>dpi</strong> and the font weights (I have been using, 300 for regular weight and 800 for the bold weight).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">showtext_auto</span>()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">showtext_opts</span>(<span class="at">dpi =</span> <span class="dv">320</span>, <span class="at">regular.wt =</span> <span class="dv">300</span>, <span class="at">bold.wt =</span> <span class="dv">800</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="load-fonts" class="level2">
+<h2 class="anchored" data-anchor-id="load-fonts">LOAD FONTS</h2>
+<p>I have become obsessed with Roboto Condensed as a font to use for my work. I will continue with that tradition. I am also loading the <a href="https://fontawesome.com/">Font-Awesome</a>, which is a toolkit and library of icons. It’s great for getting those pesky icons for social media. I believe it is what N. Rennie used to create their waffle chart for this week’s TidyTuesday, when using the <code>{waffle}</code> package.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">font_add</span>(<span class="st">"fa6-brands"</span>, <span class="st">"Users/seyramb/Library/Fonts/Font Awesome 6 Brands-Regular-400.otf"</span>) </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">font_add_google</span>(<span class="st">"Roboto Condensed"</span>, <span class="st">"title"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">font_add_google</span>(<span class="st">"Roboto Condensed"</span>, <span class="st">"subtitle"</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">font_add_google</span>(<span class="st">"Roboto Condensed"</span>, <span class="st">"caption"</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">font_add_google</span>(<span class="st">"Roboto Condensed"</span>, <span class="st">"text"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="set-titles-and-captions" class="level2">
+<h2 class="anchored" data-anchor-id="set-titles-and-captions">SET TITLES AND CAPTIONS</h2>
+<p>Using the guidance of <a href="https://www.linkedin.com/in/stevenponce/">Steven Ponce</a>, I define features like the title, subtitles and captions of all figures I create outside of the actual plot. It makes the code for the actual plot less dense, easier to interpret and identify errors when debugging.</p>
+<p>With the below I define features such as the title text and other labels, save them as seaprate objects and then place those into my plot as needed.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>tt <span class="ot">&lt;-</span> <span class="fu">str_glue</span>(<span class="st">"TidyTuesday: { 2024 } Week { 10 } &amp;vert; Source: Trash Wheel Collection Data &lt;br&gt;"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>X  <span class="ot">&lt;-</span> <span class="fu">str_glue</span>(<span class="st">"&lt;span style='font-family:fa6-brands'&gt;&amp;#xe61b;&lt;/span&gt;"</span>)   </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>gh <span class="ot">&lt;-</span> <span class="fu">str_glue</span>(<span class="st">"&lt;span style='font-family:fa6-brands'&gt;&amp;#xf09b;&lt;/span&gt;"</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>mn <span class="ot">&lt;-</span> <span class="fu">str_glue</span>(<span class="st">"&lt;span style='font-family:fa6-brands'&gt;&amp;#xf4f6;&lt;/span&gt;"</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>ttltxt <span class="ot">&lt;-</span> <span class="fu">str_glue</span>(<span class="st">"Weight of Trash Collected in Trash Wheel Program"</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>subtxt <span class="ot">&lt;-</span> <span class="fu">str_glue</span>(<span class="st">"Presently, the Baltimore Healthy Harbor initiative has four Trash Wheels collecting trash. &lt;br&gt; Together, the Trash Wheel Family has collected more than 2,945 tons of trash since 2014."</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>captxt <span class="ot">&lt;-</span> <span class="fu">str_glue</span>(<span class="st">"{tt} Visualization: {X} @butames &amp;bull; {mn} @butames(mastodon.cloud) Code: {gh} butames &amp;bull; Tools: #rstats #ggplot2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="define-color-palette" class="level2">
+<h2 class="anchored" data-anchor-id="define-color-palette">DEFINE COLOR PALETTE</h2>
+<p>From the data there are several trash wheel efforts all taking place in the Baltimore Harbor. Mr Trash Wheel got the ball rolling and others such as Prof.&nbsp;Trash Wheel and Cap. Trash Wheel joined shortly after. My waffle chart will have the <em>Program Year</em> on the x-axis and the <em>Total tonnage</em> of trash collected each year on the y-axis. Remember a waffle chart shows a square display that’s made up of smaller squares (typically in a 10x10 grid form). Consequently each square represents a percentage or portion of the whole. So, in my chart each square will represent a percentage of the total trash tonnage collected by each of the trash wheel programs. For example, if there are 100 smaller squares, each square represents 1 percent of the total tonnage. So if Mr.&nbsp;Trash Wheel, collected 50 percent of the total in 2016, then the Mr.&nbsp;Trash Wheel will have 50 smaller squares in the chart. Consequently the chart will be colored by the various wheel programs.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Background Color</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>bkgcol <span class="ot">&lt;-</span> <span class="st">"#F4E3D3FF"</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Text Color</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>ttlcol <span class="ot">&lt;-</span> <span class="st">"#000000"</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>subcol <span class="ot">&lt;-</span> <span class="st">"#000000"</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>capcol <span class="ot">&lt;-</span> <span class="st">"#000000"</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>txtcol <span class="ot">&lt;-</span> <span class="st">"#000000"</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Chart Colors</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>palette <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"#67271BFF"</span>, <span class="st">"#724615FF"</span>, <span class="st">"#E48C2AFF"</span>, <span class="st">"#345C75FF"</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"#4dbd05"</span>, <span class="st">"#127cb1"</span>, <span class="st">"#9b45a3"</span>, <span class="st">"#f18a07"</span>)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co">#Healthy Harbor Trash Wheel Collection </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="define-theme" class="level2">
+<h2 class="anchored" data-anchor-id="define-theme">DEFINE THEME</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>, <span class="at">base_family =</span> <span class="st">"text"</span>))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_update</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot.title.position =</span> <span class="st">"plot"</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot.caption.position =</span> <span class="st">"plot"</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">axis.title.x =</span> <span class="fu">element_text</span>(<span class="at">margin =</span> <span class="fu">margin</span>(<span class="at">t =</span> <span class="dv">10</span>, <span class="at">r =</span> <span class="dv">0</span>, <span class="at">b =</span> <span class="dv">0</span>, <span class="at">l =</span> <span class="dv">0</span>), <span class="at">size =</span> <span class="fu">rel</span>(<span class="dv">1</span>), <span class="at">color =</span> txtcol, <span class="at">family =</span> <span class="st">"text"</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">axis.title.y =</span> <span class="fu">element_text</span>(<span class="at">margin =</span> <span class="fu">margin</span>(<span class="at">t =</span> <span class="dv">0</span>, <span class="at">r =</span> <span class="dv">10</span>, <span class="at">b =</span> <span class="dv">0</span>, <span class="at">l =</span> <span class="dv">0</span>), <span class="at">size =</span> <span class="fu">rel</span>(<span class="dv">1</span>), <span class="at">color =</span> txtcol, <span class="at">family =</span> <span class="st">"text"</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="fu">rel</span>(<span class="dv">1</span>), <span class="at">color =</span> txtcol, <span class="at">family =</span> <span class="st">"text"</span>),</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">axis.line.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">panel.grid.minor.y =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">panel.grid.major.y =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">panel.grid.minor.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">panel.grid.major.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">#plot.margin = margin(t = 10, r = 10, b = 10, l = 10),</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> bkgcol, <span class="at">color =</span> bkgcol),</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> bkgcol, <span class="at">color =</span> bkgcol)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data-wrangling" class="level2">
+<h2 class="anchored" data-anchor-id="data-wrangling">DATA WRANGLING</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>df1 <span class="ot">&lt;-</span> trashwheel <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date =</span> <span class="fu">mdy</span>(date)) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(name, date, weight) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="at">wheel =</span> name, <span class="at">year =</span> <span class="fu">year</span>(date)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">weight =</span> <span class="fu">sum</span>(weight<span class="sc">/</span><span class="dv">10</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="at">wheel =</span> <span class="fu">factor</span>(wheel, </span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>                         <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Mister Trash Wheel"</span>, <span class="st">"Gwynnda Trash Wheel"</span>,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"Professor Trash Wheel"</span>, <span class="st">"Captain Trash Wheel"</span>))</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>          ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="create-plot" class="level2">
+<h2 class="anchored" data-anchor-id="create-plot">CREATE PLOT</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>plt1 <span class="ot">&lt;-</span> df1 <span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> weight, <span class="at">fill =</span> wheel)) <span class="sc">+</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_brick</span>(<span class="at">gap =</span> <span class="dv">0</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">bricks_per_layer =</span> <span class="dv">4</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">linewidth =</span> <span class="fl">0.1</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="st">"#FFFFFF"</span>) <span class="sc">+</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> RColorBrewer<span class="sc">::</span><span class="fu">brewer.pal</span>(<span class="at">n =</span> <span class="dv">4</span>, <span class="at">name =</span> <span class="st">"RdYlBu"</span>),</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>                    <span class="at">breaks =</span> <span class="fu">c</span>(<span class="st">"Mister Trash Wheel"</span>, <span class="st">"Gwynnda Trash Wheel"</span>, </span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Professor Trash Wheel"</span>, <span class="st">"Captain Trash Wheel"</span>),</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>                    <span class="at">name =</span> <span class="st">"Trash Wheels"</span>) <span class="sc">+</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="dv">2014</span><span class="sc">:</span><span class="dv">2023</span>) <span class="sc">+</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">label_number</span>(<span class="at">scale =</span> <span class="dv">10</span>)) <span class="sc">+</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_brick</span>() <span class="sc">+</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="cn">NULL</span>,</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Tons of trash"</span>,</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> ttltxt,</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> subtxt,</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> captxt</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title =</span> <span class="fu">element_markdown</span>(</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>      <span class="at">size    =</span> <span class="fu">rel</span>(<span class="fl">1.5</span>),</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>      <span class="at">family  =</span> <span class="st">"title"</span>,</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>      <span class="at">color   =</span> ttlcol,</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>      <span class="at">hjust   =</span> <span class="fl">0.5</span>,</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>      <span class="at">halign  =</span> <span class="fl">0.5</span>,</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>      <span class="at">margin  =</span> <span class="fu">margin</span>(<span class="at">t =</span> <span class="dv">5</span>, <span class="at">b =</span> <span class="dv">5</span>)</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.subtitle =</span> <span class="fu">element_markdown</span>(</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>      <span class="at">size    =</span> <span class="fu">rel</span>(<span class="fl">0.7</span>),</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>      <span class="at">family  =</span> <span class="st">"subtitle"</span>,</span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>      <span class="at">color   =</span> ttlcol,</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>      <span class="at">hjust   =</span> <span class="fl">0.5</span>,</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>      <span class="at">halign  =</span> <span class="fl">0.5</span>,</span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>      <span class="at">margin  =</span> <span class="fu">margin</span>(<span class="at">t =</span> <span class="dv">5</span>, <span class="at">b =</span> <span class="dv">5</span>)</span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.caption =</span> <span class="fu">element_markdown</span>(</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>      <span class="at">size    =</span> <span class="fu">rel</span>(<span class="fl">0.8</span>),</span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>      <span class="at">family  =</span> <span class="st">"caption"</span>,</span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>      <span class="at">color   =</span> capcol,</span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>      <span class="at">hjust   =</span> <span class="fl">0.5</span>,</span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>      <span class="at">halign  =</span> <span class="fl">0.5</span>,</span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>      <span class="at">margin  =</span> <span class="fu">margin</span>(<span class="at">t =</span> <span class="dv">5</span>, <span class="at">b =</span> <span class="dv">5</span>)</span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>plt1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="20240305wk10_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="save-plot" class="level2">
+<h2 class="anchored" data-anchor-id="save-plot">SAVE PLOT</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">paste0</span>(<span class="st">"wafflechart_"</span>, <span class="fu">format</span>(<span class="fu">Sys.time</span>(), <span class="st">"%d%m%Y"</span>), <span class="st">".png"</span>), <span class="at">dpi =</span> <span class="dv">320</span>, <span class="at">height =</span> <span class="fl">8.5</span>, <span class="at">width =</span> <span class="dv">11</span>, <span class="at">limitsize =</span> F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 
 </main>

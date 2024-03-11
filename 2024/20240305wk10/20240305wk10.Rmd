@@ -9,205 +9,232 @@ highlight: kate
 editor_options:
   chunk_output_type: console
 ---
+## Chart Type
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
-```
+I wanted to create a *waffle chart* in the style of [Dan Oehm's package called `{ggbrick}`](https://github.com/doehm/ggbrick). An alternative to the Ohem's package is the {waffle} package in CRAN. That package has more versatility, in the sense that you can use different icons (the kind you could get from font-awesome). However, Oehm's package, generates the brick wall aesthetic.
+## Load Library 
 
+Note that you can also use the `p_load()` function from the `{pacman}` function to load several libraries, without having to use the `library()` function formulation from base R. For example, the following `p_load(request, install = TRUE, update = TRUE)` will install, update, and load the package called `{request}`
 
-
-```{r setup1, echo=FALSE}
-
-
-```
-
-
-
-## PREP
-
-```{r prep, message=FALSE, warning=FALSE}
-
-plot(pressure)
-
-```
-
-```
-# Load packages -----------------------------------------------------------
-
+```{r setup, message=FALSE, warning=FALSE}
+library(tidytuesdayR)
 library(tidyverse)
 library(showtext)
-library(camcorder)
 library(ggtext)
-library(nrBrand)
+library(camcorder)
 library(glue)
-library(waffle)
+library(skimr)
+library(janitor)
+
+# devtools::install_github("doehm/ggbrick")
+library(ggbrick)
+
+```
+
+## Load Data
+
+This week we are working with [Trash Wheel Collection Data](https://github.com/rfordatascience/tidytuesday/blob/master/data/2024/2024-03-05/readme.md) from the [TidyTuesday Program, week 10](https://github.com/rfordatascience/tidytuesday).
+
+```{r data, message=FALSE, warning=FALSE}
+
+# tuesdata <- tt_load(2024, week = 10)
+# 
+# trashwheel <- tuesdata$trashwheel %>%
+#   clean_names() %>%
+#   write_csv("data/trashwheel.csv")
+
+trashwheel <- read_csv("data/trashwheel.csv")
+
+```
 
 
-# Load data ---------------------------------------------------------------
+## EXAMINE DATA
 
-tuesdata <- tidytuesdayR::tt_load("2024-03-05")
-trashwheel <- tuesdata$trashwheel
+```{r exam, message=FALSE, warning=FALSE}
 
+examdt <- skim(trashwheel)
 
-# Load fonts --------------------------------------------------------------
+examdt
 
-font_add_google("Roboto", "roboto")
-font_add_google("Roboto Slab", "roboto_slab")
-sysfonts::font_add(
-  family = "Font Awesome 6",
-  regular = "2024/2024-03-05/Font Awesome 6 Free-Solid-900.otf"
-)
+```
+
+## SET TEXT RESOLUTION
+
+This is an important step when using the `{showtext}` package (i.e., using the `showtext_auto()` function). Fortunately you only have to do it once, but if you don't your fonts will not load in the document. The `showtext_opts()` sets characteristics of the font you are suing such as specifying the **dpi** and the font weights (I have been using, 300 for regular weight and 800 for the bold weight). 
+
+```{r, text, message=TRUE, warning=FALSE}
+
 showtext_auto()
 
+showtext_opts(dpi = 320, regular.wt = 300, bold.wt = 800)
 
-# Define colours and fonts-------------------------------------------------
+```
 
-bg_col <- "#fafafa"
-text_col <- "black"
-col_palette <- rcartocolor::carto_pal(length(unique(trashwheel$Name)) + 1, "Vivid")[1:length(unique(trashwheel$Name))]
-names(col_palette) <- unique(trashwheel$Name)
-highlight_col <- col_palette[1]
+## LOAD FONTS
 
-body_font <- "roboto"
-title_font <- "roboto_slab"
+I have become obsessed with Roboto Condensed as a font to use for my work. I will continue with that tradition. I am also loading the [Font-Awesome](https://fontawesome.com/), which is a toolkit and library of icons. It's great for getting those pesky icons for social media. I believe it is what N. Rennie used to create their waffle chart for this week's TidyTuesday, when using the `{waffle}` package.
+
+```{r fonts, message=FALSE, warning=FALSE}
+
+font_add("fa6-brands", "Users/seyramb/Library/Fonts/Font Awesome 6 Brands-Regular-400.otf") 
+font_add_google("Roboto Condensed", "title")
+font_add_google("Roboto Condensed", "subtitle")
+font_add_google("Roboto Condensed", "caption")
+font_add_google("Roboto Condensed", "text")
+
+```
+
+## SET TITLES AND CAPTIONS
+
+Using the guidance of [Steven Ponce](https://www.linkedin.com/in/stevenponce/), I define features like the title, subtitles and captions of all figures I create outside of the actual plot. It makes the code for the actual plot less dense, easier to interpret and identify errors when debugging. 
+
+With the below I define features such as the title text and other labels, save them as seaprate objects and then place those into my plot as needed.
+
+```{r}
+tt <- str_glue("TidyTuesday: { 2024 } Week { 10 } &vert; Source: Trash Wheel Collection Data <br>")
+X  <- str_glue("<span style='font-family:fa6-brands'>&#xe61b;</span>")   
+gh <- str_glue("<span style='font-family:fa6-brands'>&#xf09b;</span>")
+mn <- str_glue("<span style='font-family:fa6-brands'>&#xf4f6;</span>")
+
+ttltxt <- str_glue("Weight of Trash Collected in Trash Wheel Program")
+subtxt <- str_glue("Presently, the Baltimore Healthy Harbor initiative has four Trash Wheels collecting trash. <br> Together, the Trash Wheel Family has collected more than 2,945 tons of trash since 2014.")
+captxt <- str_glue("{tt} Visualization: {X} @butames &bull; {mn} @butames(mastodon.cloud) Code: {gh} butames &bull; Tools: #rstats #ggplot2")
+
+```
+
+## DEFINE COLOR PALETTE
+
+From the data there are several trash wheel efforts all taking place in the Baltimore Harbor. Mr Trash Wheel got the ball rolling and others such as Prof. Trash Wheel and Cap. Trash Wheel joined shortly after. My waffle chart will have the *Program Year* on the x-axis and the *Total tonnage* of trash collected each year on the y-axis. Remember a waffle chart shows a square display that’s made up of smaller squares (typically in a 10x10 grid form). Consequently each square represents a percentage or portion of the whole. So, in my chart each square will represent a percentage of the total trash tonnage collected by each of the trash wheel programs. For example, if there are 100 smaller squares, each square represents 1 percent of the total tonnage.  So if Mr. Trash Wheel, collected 50 percent of the total in 2016, then the Mr. Trash Wheel will have 50 smaller squares in the chart. Consequently the chart will be colored by the various wheel programs. 
 
 
-# Data wrangling ----------------------------------------------------------
+```{r}
 
-plot_data <- trashwheel |>
-  group_by(Year, Name) |>
-  summarise(HomesPowered = round(sum(HomesPowered) / 100)) |>
-  ungroup() |>
-  drop_na() |>
-  filter(HomesPowered != 0) |> 
-  mutate(Name = factor(
-    Name, levels = c(
-      "Mister Trash Wheel", "Professor Trash Wheel",
-      "Captain Trash Wheel", "Gwynnda Trash Wheel"
-    )
-  )) |> 
-  arrange(Name)
+# Background Color
+bkgcol <- "#F4E3D3FF"
+
+# Text Color
+
+ttlcol <- "#000000"
+subcol <- "#000000"
+capcol <- "#000000"
+txtcol <- "#000000"
+
+# Chart Colors
+
+palette <- c("#67271BFF", "#724615FF", "#E48C2AFF", "#345C75FF")
+
+cols <- c("#4dbd05", "#127cb1", "#9b45a3", "#f18a07")
 
 
-# Start recording ---------------------------------------------------------
+#Healthy Harbor Trash Wheel Collection 
 
-gg_record(
-  dir = file.path("2024", "2024-03-05", "recording"),
-  device = "png",
-  width = 7,
-  height = 5,
-  units = "in",
-  dpi = 300
+```
+
+## DEFINE THEME
+
+```{r, warning=FALSE, message=FALSE}
+theme_set(theme_minimal(base_size = 12, base_family = "text"))
+theme_update(
+  plot.title.position = "plot",
+  plot.caption.position = "plot",
+  axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0), size = rel(1), color = txtcol, family = "text", face = "bold"),
+  axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0), size = rel(1), color = txtcol, family = "text", face = "bold"),
+  axis.text = element_text(size = rel(1), color = txtcol, family = "text"),
+  axis.line.x = element_blank(),
+  panel.grid.minor.y = element_blank(),
+  panel.grid.major.y = element_blank(),
+  panel.grid.minor.x = element_blank(),
+  panel.grid.major.x = element_blank(),
+  #plot.margin = margin(t = 10, r = 10, b = 10, l = 10),
+  plot.background = element_rect(fill = bkgcol, color = bkgcol),
+  panel.background = element_rect(fill = bkgcol, color = bkgcol)
 )
 
-
-# Define text -------------------------------------------------------------
-
-social <- nrBrand::social_caption(
-  bg_colour = bg_col,
-  icon_colour = highlight_col,
-  font_colour = text_col,
-  font_family = body_font
-)
-title <- "Over 45,000 homes powered by trash"
-st <- glue("The Healthy Harbor initiative has four Trash Wheels collecting trash.
-Trash Wheels are semi-autonomous trash interceptors that are placed at the end
-of rivers, streams or other outfalls. Far too lazy to chase trash around the
-ocean, Trash Wheels stay put and wait for the waste to flow to them. Sustainably
-powered and built to withstand the biggest storms, Trash Wheels use a unique
-blend of solar and hydro power to pull hundreds of tons of trash out of the
-water each year. 
-<span style='color: {col_palette['Mister Trash Wheel']};'>Mister Trash Wheel</span> 
-was the first to start, and since then three more have joined the family: 
-<span style='color: {col_palette['Professor Trash Wheel']};'>Professor Trash Wheel</span>, 
-<span style='color: {col_palette['Captain Trash Wheel']};'>Captain Trash Wheel</span>, and
-<span style='color: {col_palette['Gwynnda Trash Wheel']};'>Gwynnda Trash Wheel</span>.")
-cap <- paste0(
-  st,
-  "<br><br>**Data**: Mr. Trash Wheel Baltimore Healthy Harbor<br>**Graphic**: ", social
-)
+```
 
 
-# Plot --------------------------------------------------------------------
+## DATA WRANGLING
 
-ggplot(data = plot_data) +
-  geom_pictogram(
-    mapping = aes(
-      label = Name, colour = Name, values = HomesPowered
-    ),
-    flip = TRUE,
-    n_rows = 5,
-    size = 7,
-    family = "Font Awesome 6"
-  ) +
-  scale_label_pictogram(
-    name = NULL,
-    values = c("home", "home", "home", "home")
-  ) +
-  scale_colour_manual(
-    values = col_palette,
-    breaks = c(
-      "Mister Trash Wheel", "Professor Trash Wheel",
-      "Captain Trash Wheel", "Gwynnda Trash Wheel"
-    )
-  ) +
-  scale_x_discrete(
-    expand = c(0, 0, 0, 0)
-  ) +
-  scale_y_continuous(
-    labels = function(x) format(x * 5 * 100, big.mark = ","),
-    expand = c(0, 0),
-    breaks = c(0, 5, 10, 15, 20),
-    limits = c(0, 20),
-    minor_breaks = NULL
-  ) +
-  facet_wrap(~Year, nrow = 1, strip.position = "bottom") +
+```{r, wrang, warning=FALSE, message=FALSE}
+
+df1 <- trashwheel %>%
+  mutate(date = mdy(date)) %>% 
+  select(name, date, weight) %>% 
+  drop_na() %>% 
+  group_by(wheel = name, year = year(date)) %>%
+  summarise(weight = sum(weight/10)) %>% 
+  ungroup() %>%
+  arrange(wheel = factor(wheel, 
+                         levels = c("Mister Trash Wheel", "Gwynnda Trash Wheel",
+                                    "Professor Trash Wheel", "Captain Trash Wheel"))
+          ) 
+```
+
+
+## CREATE PLOT
+
+```{r, warning=FALSE, message=FALSE}
+
+plt1 <- df1 %>%
+  ggplot(mapping = aes(x = year, y = weight, fill = wheel)) +
+  geom_brick(gap = 0,
+             bricks_per_layer = 4,
+             linewidth = 0.1,
+             color = "#FFFFFF") +
+  scale_fill_manual(values = RColorBrewer::brewer.pal(n = 4, name = "RdYlBu"),
+                    breaks = c("Mister Trash Wheel", "Gwynnda Trash Wheel", 
+                               "Professor Trash Wheel", "Captain Trash Wheel"),
+                    name = "Trash Wheels") +
+  scale_x_continuous(breaks = 2014:2023) +
+  scale_y_continuous(labels = scales::label_number(scale = 10)) +
+  coord_brick() +
   labs(
-    title = title,
-    subtitle = cap
-  ) +
-  coord_fixed() +
-  theme_minimal(
-    base_family = body_font,
-    base_size = 26
+    x = NULL,
+    y = "Tons of trash",
+    title = ttltxt,
+    subtitle = subtxt,
+    caption = captxt
   ) +
   theme(
-    legend.position = "none",
-    plot.title.position = "plot",
-    plot.margin = margin(5, 15, 5, 15),
-    plot.background = element_rect(fill = bg_col, colour = bg_col),
-    panel.background = element_rect(fill = bg_col, colour = bg_col),
-    panel.grid.major = element_line(
-      linewidth = 0.4
+    plot.title = element_markdown(
+      size    = rel(1.5),
+      family  = "title",
+      color   = ttlcol,
+      hjust   = 0.5,
+      halign  = 0.5,
+      margin  = margin(t = 5, b = 5)
     ),
-    plot.title = element_textbox_simple(
-      colour = text_col,
-      hjust = 0,
-      halign = 0,
-      margin = margin(b = 10, t = 10),
-      lineheight = 0.5,
-      face = "bold",
-      size = rel(1.8),
-      family = title_font
+    plot.subtitle = element_markdown(
+      size    = rel(0.7),
+      family  = "subtitle",
+      color   = ttlcol,
+      hjust   = 0.5,
+      halign  = 0.5,
+      margin  = margin(t = 5, b = 5)
     ),
-    plot.subtitle = element_textbox_simple(
-      colour = text_col,
-      hjust = 0,
-      halign = 0,
-      margin = margin(b = 20, t = 10),
-      lineheight = 0.5,
-      family = body_font
+    plot.caption = element_markdown(
+      size    = rel(0.8),
+      family  = "caption",
+      color   = capcol,
+      hjust   = 0.5,
+      halign  = 0.5,
+      margin  = margin(t = 5, b = 5)
     )
   )
 
+plt1
 
-# Save gif ----------------------------------------------------------------
-
-gg_playback(
-  name = file.path("2024", "2024-03-05", paste0("20240305", ".gif")),
-  first_image_duration = 4,
-  last_image_duration = 20,
-  frame_duration = .25,
-  background = bg_col
-)
 ```
+
+## SAVE PLOT
+
+```{r}
+
+ggsave(paste0("wafflechart_", format(Sys.time(), "%d%m%Y"), ".png"), dpi = 320, height = 8.5, width = 11, limitsize = F)
+
+
+```
+
+
+
+
