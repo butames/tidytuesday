@@ -1,0 +1,35 @@
+---
+title: "Race Amalgamation in Georgia (plate 13), March 4"
+author: "Seyram A. Butame"
+date: "March 05, 2024"
+format:
+  html: 
+   theme: cosmo
+highlight: kate
+editor_options:
+  chunk_output_type: console
+---
+
+The goal is to reproduce **plate 13** developed by W.E.B Du Bois  for the 1900 Paris Exposition.
+
+## LIBRARY
+
+This seems like a very simplistic project (relative to the previous week). The {tidyverse} package, should suffice.
+
+```{r, library, message=FALSE, warning=FALSE, echo=FALSE}
+
+library(tidyverse)
+library(showtext)
+library(janitor)
+
+```
+
+## IMPORT DATA
+
+```{r, data, message=FALSE, warning=FALSE, echo=FALSE}
+
+df1 <- read_csv("data/data.csv")
+
+```
+
+
