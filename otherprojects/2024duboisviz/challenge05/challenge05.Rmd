@@ -36,6 +36,7 @@ This seems like a very simplistic project (relative to the previous week). The `
 library(tidyverse)
 library(showtext)
 library(janitor)
+library(ggtext)
 
 ```
 
@@ -115,19 +116,19 @@ palette <- c("#151515", "#4D3228", "#FAC104")
 ```{r, theme, warning=FALSE, message=FALSE}
 theme_set(theme_minimal(base_size = 12, base_family = "text"))
 theme_update(
-  plot.title.position = "plot",
+  plot.title.position   = "plot",
   plot.caption.position = "plot",
-  axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0), size = rel(1), color = txtcol, family = "text", face = "bold"),
-  axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0), size = rel(1), color = txtcol, family = "text", face = "bold"),
-  axis.text = element_text(size = rel(1), color = txtcol, family = "text"),
-  axis.line.x = element_blank(),
-  panel.grid.minor.y = element_blank(),
-  panel.grid.major.y = element_blank(),
-  panel.grid.minor.x = element_blank(),
-  panel.grid.major.x = element_blank(),
-  plot.margin = margin(t = 10, r = 10, b = 10, l = 10),
-  plot.background = element_rect(fill = bkgcol, color = bkgcol),
-  panel.background = element_rect(fill = bkgcol, color = bkgcol)
+  axis.title.x          = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0), size = rel(1), color = txtcol, family = "text", face = "bold"),
+  axis.title.y          = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0), size = rel(1), color = txtcol, family = "text", face = "bold"),
+  axis.text             = element_blank(),
+  axis.line.x           = element_blank(),
+  panel.grid.minor.y    = element_blank(),
+  panel.grid.major.y    = element_blank(),
+  panel.grid.minor.x    = element_blank(),
+  panel.grid.major.x    = element_blank(),
+  plot.margin           = margin(t = 10, r = 10, b = 10, l = 10),
+  plot.background       = element_rect(fill = bkgcol, color = bkgcol),
+  panel.background      = element_rect(fill = bkgcol, color = bkgcol)
 )
 
 ```
@@ -143,24 +144,66 @@ plt1 <- df1 %>%
   scale_fill_manual(values = palette) +
   annotate("text", x = 0.95, y = 80, label = "44%", size = 5, hjust = 0, colour = "#FFFFFF") +
   annotate("text", x = 0.95, y = 37.5, label = "40%", size = 5, hjust = 0, colour = "#990000") +
-  annotate("text", x = 0.55, y = 16, label = "YELLOW.", size = 5, hjust = 0, fontface = "bold") +
-  annotate("text", x = 0.60, y = 12, label = "I.E. PERSONS WITH\nMORE THAN\nNEGRO BLOOD.", size =2,hjust = 0)
-  annotate("text", x = 0.95, y = 8, label = "16%", size = 5, hjust = 0, colour = "#000000") 
+  annotate("text", x = 0.95, y = 8, label = "16%", size = 5, hjust = 0, colour = "#000000") +
   
   annotate("text", x = 0.55, y = 90, label = "BLACK.", size = 5, hjust = 0, fontface = "bold") +
   annotate("text", x = 0.60, y = 87, label = "IE.FULL-BLOOD.\nNEGROES.", size = 2, hjust = 0) +
-  annotate("text", x = 0.95, y = 80, label = "44%", size = 5, hjust = 0, colour = "white")+
-   
+  
   annotate("text", x = 0.55, y = 50, label = "BROWN.", size = 5, hjust = 0, fontface = "bold") +
   annotate("text", x = 0.60, y = 44, label = "IE.PERSONS WITH\nSOME WHITE BLOOD\nOR DESCENDENTS\nOF LIGHT COLORED\nAFRICANS", size = 2,hjust = 0) +
-   annotate("text", x = 0.95, y = 35, label = "40%", size = 5, hjust = 0, colour = "red")
-       
-  # geom_text(aes(label = percentage), vjust = -0.2)
   
+  annotate("text", x = 0.55, y = 16, label = "YELLOW.", size = 5, hjust = 0, fontface = "bold") +
+  annotate("text", x = 0.60, y = 12, label = "I.E. PERSONS WITH\nMORE THAN\nNEGRO BLOOD.", size =2,hjust = 0) +
+  
+  labs(
+    x = NULL,
+    y = NULL,
+    title = ttltxt,
+    subtitle = subtxt,
+    caption = captxt
+  ) +
+  theme(
+    legend.position  = "none",
+    plot.title       = element_markdown(
+      size           = rel(1.5), 
+      family         = "title",
+      face           = "bold",
+      color          = ttlcol,
+      hjust = 0.5,
+      halign = 0.5,
+      margin         = margin(t = 5, b = 5)),
+    plot.subtitle    = element_markdown(
+      size           = rel(.8), 
+      family         = "subtitle",
+      color          = subcol,
+      lineheight     = 0.65,
+      hjust          = 0.5,
+      halign         = 0.5,
+      margin         = margin(t = 5, b = 5)),
+    plot.caption     = element_markdown(
+      size           = rel(.8), 
+      family         = "caption",
+      color          = capcol,
+      lineheight     = 0.65,
+      hjust          = 0.5,
+      halign         = 0.5,
+      margin         = margin(t = 5, b = 5))
+  )
+
 
 plt1 
 
 ```
+
+## SAVE FIGURE
+
+```{r, save, warning=FALSE, message=FALSE}
+
+ggsave(paste0("challenge05_", format(Sys.time(), "%d%m%Y"), ".png"), dpi = 320, height=11, width = 8.5, limitsize = F)
+
+
+```
+
 
 
 
