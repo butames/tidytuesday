@@ -143,7 +143,18 @@ plt1 <- df1 %>%
   scale_fill_manual(values = palette) +
   annotate("text", x = 0.95, y = 80, label = "44%", size = 5, hjust = 0, colour = "#FFFFFF") +
   annotate("text", x = 0.95, y = 37.5, label = "40%", size = 5, hjust = 0, colour = "#990000") +
+  annotate("text", x = 0.55, y = 16, label = "YELLOW.", size = 5, hjust = 0, fontface = "bold") +
+  annotate("text", x = 0.60, y = 12, label = "I.E. PERSONS WITH\nMORE THAN\nNEGRO BLOOD.", size =2,hjust = 0)
   annotate("text", x = 0.95, y = 8, label = "16%", size = 5, hjust = 0, colour = "#000000") 
+  
+  annotate("text", x = 0.55, y = 90, label = "BLACK.", size = 5, hjust = 0, fontface = "bold") +
+  annotate("text", x = 0.60, y = 87, label = "IE.FULL-BLOOD.\nNEGROES.", size = 2, hjust = 0) +
+  annotate("text", x = 0.95, y = 80, label = "44%", size = 5, hjust = 0, colour = "white")+
+   
+  annotate("text", x = 0.55, y = 50, label = "BROWN.", size = 5, hjust = 0, fontface = "bold") +
+  annotate("text", x = 0.60, y = 44, label = "IE.PERSONS WITH\nSOME WHITE BLOOD\nOR DESCENDENTS\nOF LIGHT COLORED\nAFRICANS", size = 2,hjust = 0) +
+   annotate("text", x = 0.95, y = 35, label = "40%", size = 5, hjust = 0, colour = "red")
+       
   # geom_text(aes(label = percentage), vjust = -0.2)
   
 
