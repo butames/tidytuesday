@@ -25,5 +25,12 @@ This year the theme for the challenge will be organized around the colors of the
 
 ![Challenge 03](https://github.com/butames/tidytuesday/blob/main/otherprojects/2024duboisviz/challenge03/challenge03_23022024.png)
 
+## Challenge 05 - Race Amalgamation in Georgia (plate 13), February
+
+## Challenge 05 - Race Amalgamation in Georgia (plate 13), March 4
+
+![Challenge 05](https://raw.githubusercontent.com/butames/tidytuesday/main/otherprojects/2024duboisviz/challenge05/challenge05_13032024.png)
+
+## Challenge 06 - Amalgamation of the White and Black elements of the population in the United States (plate 54), March 11
 
 Source: https://github.com/ajstarks/dubois-data-portraits/tree/master/challenge/2024
