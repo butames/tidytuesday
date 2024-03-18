@@ -1,0 +1,203 @@
+---
+title: "TidyTuesday Week 11: Fiscal Sponsors"
+author: "Seyram A. Butame"
+date: "March 05, 2024"
+format:
+  html: 
+   theme: cosmo
+highlight: kate
+editor_options:
+  chunk_output_type: console
+---
+
+
+## CHART TYPE
+
+This week titled **Fiscal Sponsors** with dta coming from the [Fiscal Sponsor Directory](https://fiscalsponsordirectory.org/?page_id=1330). The RVDS Community with produces TidyTuesday is looking for sponsorships and are hoping our dataviz creations will help them out. I think I will try for a **Tree Map** this go around. I saw a lovely Tree Map from last week, which used Trash Wheel Data, created Gregory Vander Vinne (@GregoryVdivnne on X/Twitter). It showed Trash Wheel program on y-axis and the type of trash collected on the x.-axis.
+
+ <center>
+<img
+  src="https://raw.githubusercontent.com/GregoryVdvinne/Tidy_Tuesday/main/2024-03-05/2024-03-05.png"
+  alt="Tree Map of Trash Wheel Data - TidyTuesday (March 05, 2024)"
+  title="Tree Map of Trash Wheel Data - TidyTuesday (March 05, 2024)"
+  width = "50%"/>
+  <p>
+    Race Amalgamation in Georgia (plate 13), March 4.
+  </p>
+  <footer>Created by Gregory Vander Vinne ([@GregoryVdvinne](https://twitter.com/GregoryVdvinne) on X)</cite></footer>
+ </center>
+
+I think I can do something with this sponsorship data. So I can have perhaps the *Project Types* or the Fiscal Sponsorship Model on the y-axis (i.e., some kind of categorical data). Then I have the number of those categories on the x-axis. I think this approach works because the data contains categories (i.e.,  Project Types). The above looks similar to **Treemap Plot**. Treemaps are often used to compare quantities and patterns in a limited space, and are best for data that shows a part-to-whole relationship. They illusttate the hierarchical strudture of the data.
+
+However looking closely at the figure above, and reading up on the authors work, it appears to be a **Mosaic Plot**. These are family of plots that share some similarities with Treemaps, however, they have more in common with a stacked bar chart. They are typically a graphic representation of a contingency table (e.g., a 2x2 table of proportions or perhaps the table showing odds-ratios common in epi-studies).
+
+> "Mosaic plots assume that every level of one grouping variable can be combined with every level of another grouping variable, whereas treemaps do not make such an assumption. Treemaps work well even if the subdivisions of one group are entirely distinct from the subdivisions of another."
+>
+> - *Wilke, Claus O. Fundamentals of data visualization: a primer on making informative and compelling figures. O'Reilly Media, 2019*
+
+I bring this up because after doing my googles (and looking at the work of [@GregoryVdvinne](https://twitter.com/GregoryVdvinne)), I learned of the package called `{ggmosaic}` which can create mosaic plots and if the data is arranged right, we will create a 
+
+## LIBRARY 
+
+```{r, library, warning=FALSE, message=FALSE}
+
+library(tidytuesdayR)
+library(tidyverse)
+library(showtext)
+library(ggtext)
+library(glue)
+library(treemapify)
+library(camcorder)
+library(fishualize)
+library(ggmosaic)
+library(colorspace)
+
+```
+
+## IMPORT DATA
+
+Just as a note TidyTuesday employs an API to retrieve the data. As I work on this project I may pull on the API several times, and github only allows a certain number of queries a day, hence, I will query the data once, save it, and then draw on my locally saved file for my work. If using this code for the first time, just remove the comment tags to access the code. 
+
+```{r, data, message=FALSE, warning=FALSE}
+
+# tuesdata <- tt_load(2024, week = 11)
+# 
+# fiscal_sponsor_directory <- tuesdata$fiscal_sponsor_directory %>%
+#   write_csv("data/fiscal_sponsor_directory.csv")
+
+df1 <- read_csv("data/fiscal_sponsor_directory.csv") %>%
+  janitor::clean_names()
+
+```
+
+
+## DATA WRANGLING
+
+I have decided to create a mosaic plot. Therefore I will have the *Sponsorship Model* on the x-axis, and the *Project Type* on the y-axis. And each of the resulting rectangles will relfect the number of sponsorships that fit a particular *Project Type* and and *Sponsorship Model* Recall that a mosaic model is a type of stacked bar chart, displaying categorical variables on both axes. Consquently, I have to do a bit of data cleaning to get the data in order for that.
+
+
+The `project_type` variable contains a lot of characters, and I have to shorten things and remove unnecessary. I start by removing everything from a *colon* onwards using the `str_remove()`.
+
+```{r, wrangle, message=FALSE, warning=FALSE}
+
+df1 %>%
+  select(project_types) %>%
+  separate_rows(project_types, sep = "\\|") %>%
+  mutate(
+    project_types = str_remove(project_types, ":.+"),
+    project_types = str_trim(project_types),
+    project_types = str_to_lower(project_types),
+    project_types = str_replace(project_types, "/|and", " & ")
+  ) %>%
+  drop_na() %>%
+  count(project_types, sort = TRUE) %>%
+  mutate(project_types = if_else(n < 10, "other", project_types)) %>%
+  group_by(project_types) %>%
+  summarise(n = sum(n))
+
+# plot_data <- fiscal_sponsor_directory |>
+#   select(n_sponsored, fiscal_sponsorship_model) |>
+#   drop_na(n_sponsored) |>
+#   separate_longer_delim(fiscal_sponsorship_model, "|") |>
+#   mutate(fiscal_sponsorship_model = replace_na(fiscal_sponsorship_model, "Unknown")) |>
+#   mutate(
+#     fiscal_sponsorship_model =
+#       case_when(
+#         str_detect(fiscal_sponsorship_model, "Model A") ~ "Model A",
+#         str_detect(fiscal_sponsorship_model, "Model B") ~ "Model B",
+#         str_detect(fiscal_sponsorship_model, "Model C") ~ "Model C",
+#         str_detect(fiscal_sponsorship_model, "Model D") ~ "Model D",
+#         str_detect(fiscal_sponsorship_model, "Model E") ~ "Model E",
+#         str_detect(fiscal_sponsorship_model, "Model F") ~ "Model F",
+#         str_detect(fiscal_sponsorship_model, "Model L") ~ "Model L",
+#         str_detect(fiscal_sponsorship_model, "Other") ~ "Other",
+#         str_detect(fiscal_sponsorship_model, "Unknown") ~ "Unknown",
+#         TRUE ~ "Other"
+#       )
+#   )
+
+```
+
+
+## SET TEXT RESOLUTION
+
+
+```{r, text, message=TRUE, warning=FALSE}
+
+showtext_auto()
+
+showtext_opts(dpi = 320, regular.wt = 300, bold.wt = 800)
+
+```
+
+## LOAD FONTS
+
+I have become enamored with *Roboto Condensed*. I like it's clean and non-blocky look. As always I import [Font Awesome](https://fontawesome.com/icons) 
+
+```{r fonts, message=FALSE, warning=FALSE}
+
+font_add("fa6-brands", "Users/seyramb/Library/Fonts/Font Awesome 6 Brands-Regular-400.otf") 
+font_add_google("Roboto Condensed", "title")
+font_add_google("Roboto Condensed", "subtitle")
+font_add_google("Roboto Condensed", "caption")
+font_add_google("Roboto Condensed", "text")
+
+```
+
+
+## TITLES & CAPTIONS
+
+```{r, title, warning=FALSE, message=FALSE}
+tt <- str_glue("TidyTuesday: { 2024 } Week { 10 } &vert; Source: Fiscal Sponsors Directory<br>")
+X  <- str_glue("<span style='font-family:fa6-brands'>&#xe61b;</span>")   
+gh <- str_glue("<span style='font-family:fa6-brands'>&#xf09b;</span>")
+mn <- str_glue("<span style='font-family:fa6-brands'>&#xf4f6;</span>")
+
+ttltxt <- str_glue("Fiscal Sponsors")
+subtxt <- str_glue("Project types  supported by 370 fiscal sponsors.")
+captxt <- str_glue("{tt} Contact: {X} @butames &vert; {mn} @butames(mastodon.cloud) Code: {gh} butames &vert; Tools: #rstats #ggplot2 #dataviz")
+
+```
+
+
+## SELECT COLOR 
+```{r, color, warning=FALSE, message=FALSE}
+
+# Background Color
+bkgcol <- "#DCC6B3"
+
+# Text Color
+
+ttlcol <- "#000000"
+subcol <- "#000000"
+capcol <- "#000000"
+txtcol <- "#000000"
+
+# Chart Colors
+
+palette <- fish(n = 5, option = "Antennarius_commerson")[c(1,3:5)]
+
+back_colour =  fish(n = 5, option = "Antennarius_commerson")[2] %>%
+  darken(0.4)
+strong_text = "#EFEFEF"
+weak_text = darken(strong_text, 0.1)
+
+```
+
+## REFERENCES
+
+1. Wilkins D, Rudis B. treemapify: Draw Treemaps in “ggplot2.” Published online September 30, 2023. Accessed March 15, 2024. https://cran.r-project.org/web/packages/treemapify/index.html
+2. Wickham H, RStudio. tidyverse: Easily Install and Load the “Tidyverse.” Published online February 22, 2023. Accessed February 2, 2024. https://cran.r-project.org/web/packages/tidyverse/index.html
+3. Hughes E, Harmon J, Mock T, Community ROL. tidytuesdayR: Access the Weekly “TidyTuesday” Project Dataset. Published online December 13, 2023. Accessed February 2, 2024. https://cran.r-project.org/web/packages/tidytuesdayR/index.html
+4. Qiu Y. showtext. Published online January 20, 2024. Accessed January 21, 2024. https://github.com/yixuan/showtext
+5. Wilke CO, Wiernik BM. ggtext: Improved Text Rendering Support for “ggplot2.” Published online September 16, 2022. Accessed January 26, 2024. https://cran.r-project.org/web/packages/ggtext/index.html
+6. Hughes E, Scherer C, Karamanis G. camcorder: Record Your Plot History. Published online October 3, 2022. Accessed February 7, 2024. https://cran.r-project.org/web/packages/camcorder/index.html
+7. Hester J, Bryan J, Software P, PBC. glue: Interpreted String Literals. Published online January 9, 2024. Accessed January 26, 2024. https://cran.r-project.org/web/packages/glue/index.html
+8. Schiettekatte NMD. fishualize. Published online March 13, 2024. Accessed March 15, 2024. https://github.com/nschiett/fishualize
+9. Ihaka R, Murrell P, Hornik K, et al. colorspace: A Toolbox for Manipulating and Assessing Colors and Palettes. Published online January 23, 2023. Accessed March 15, 2024. https://cran.r-project.org/web/packages/colorspace/index.html
+10. Jeppson H, Hofmann H, Cook D, Wickham H. ggmosaic: Mosaic Plots in the “ggplot2” Framework. Published online February 23, 2021. Accessed March 15, 2024. https://cran.r-project.org/web/packages/ggmosaic/index.html
+
+
+
+
+
