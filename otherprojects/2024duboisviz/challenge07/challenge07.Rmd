@@ -1,0 +1,102 @@
+---
+title: "Illiteracy of the American Negro compared with other nations (plate 47), March 18"
+author: "Seyram A. Butame"
+date: "March 18, 2024"
+format:
+  html: 
+   theme: cosmo
+highlight: kate
+editor_options:
+  chunk_output_type: console
+---
+
+The goal this week is to reproduce **plate 47** developed by W.E.B Du Bois  for the 1900 Paris Exposition (as shown below).
+
+<img
+  src="https://raw.githubusercontent.com/butames/tidytuesday/main/otherprojects/2024duboisviz/challenge07/img/original-plate-47.jpg"
+  alt="Illiteracy of the American Negro compared with other nations (plate 47), March 18"
+  title="Illiteracy of the American Negro compared with other nations (plate 47), March 18" 
+  height="35%"/>
+<blockquote>
+  <p>
+    Illiteracy of the American Negro compared with other nations (plate 47), March 18
+  </p>
+  <footer>- #DuBoisChallenge came from Allen Hillery and Sekou Tyler (2024)</cite></footer>
+</blockquote>
+
+
+## LIBRARY
+
+This week, the challenge is fairly straight-forward. We are dealing with a horizontal bar chart (i.e., categories on the y-axis, and integers on the x-axis). So I am mostly relying on `{ggplot2}` within `{tidyverse}` suite of packages. I will also use the janitor package. I typically use the `clean_names()` function, to ensure the variable names are entered consistently. I am also using the `{showtext}` and the `{ggtext}` packages to help with using outside fonts. 
+
+
+```{r, library, warning=FALSE, message=FALSE, echo=FALSE}
+
+library(tidyverse)
+library(janitor)
+library(showtext)
+library(ggtext)
+
+```
+
+
+## SET TEXT RESOLUTION
+
+
+```{r, text, message=TRUE, warning=FALSE}
+
+showtext_auto()
+
+showtext_opts(dpi = 320, regular.wt = 300, bold.wt = 800)
+
+```
+
+## LOAD FONTS
+
+For the Du Bois challenges I have been using the **Exo 2** font available through [Google Fonts](https://fonts.google.com/specimen/Exo+2?query=exo+2). This font was designed by [Natanael Gama](https://fonts.google.com/?query=Natanael+Gama). It is a font that somewhat approximates the font used by Du Bois for all chart plates.
+
+However *plate 47* for Challenge 07 is using a different font, which looks more like fonts used by more modern typewritters of the 20th Century. I think that stand typewriter font is in the Courier family. However, Courier Prime, the Google Font version is not quite right. The closest approximation I found was the **Cutive Mono**, others that may work include **Lekton**, and **Kosugi Maru**. **Cutive Mono** is available from [Google Fonts](https://fonts.google.com/specimen/Cutive+Mono?query=cutive+mon) and is Designed by [Vernon Adams](https://fonts.google.com/?query=Vernon+Adams).
+
+I continue to use [**Font Aweseome**](https://fontawesome.com/icons) to import icons into my plot.
+
+```{r fonts, message=FALSE, warning=FALSE}
+
+font_add("fa6-brands", "Users/seyramb/Library/Fonts/Font Awesome 6 Brands-Regular-400.otf") 
+font_add_google("Cutive Mono", "title")
+font_add_google("Cutive Mono", "subtitle")
+font_add_google("Cutive Mono", "caption")
+font_add_google("Cutive Mono", "text")
+
+```
+
+## TITLES & CAPTIONS
+
+```{r, title, warning=FALSE, message=FALSE}
+tt <- str_glue("Du Bois Challenge: { 2024 } Week { 07 } &vert; Source: Allen Hillery and Sekou Tyler<br>")
+X  <- str_glue("<span style='font-family:fa6-brands'>&#xe61b;</span>")   
+gh <- str_glue("<span style='font-family:fa6-brands'>&#xf09b;</span>")
+mn <- str_glue("<span style='font-family:fa6-brands'>&#xf4f6;</span>")
+
+ttltxt <- str_glue("Illiteracy of the American Negro compared with other nations.")
+subtxt <- str_glue("Proportion d' illettres parmi le Negres Americans comparee a celle des autres nations<br>Done by Atlanta University.")
+captxt <- str_glue("{tt} Visualization: {X} @butames &bull; {mn} @butames(mastodon.cloud) Code: {gh} butames &bull; Tools: #rstats #ggplot2")
+
+```
+
+## SAVE FIGURE
+
+```{r, save, warning=FALSE, message=FALSE}
+
+# ggsave(paste0("challenge07_", format(Sys.time(), "%d%m%Y"), ".png"), dpi = 320, height=11, width = 8.5, limitsize = F)
+
+
+```
+
+## REFERENCES
+
+1. Firke S, Denney B, Haid C, Knight R, Grosser M, Zadra J. janitor: Simple Tools for Examining and Cleaning Dirty Data. Published online February 2, 2023. Accessed March 21, 2024. https://cran.r-project.org/web/packages/janitor/index.html
+2. Wickham H, RStudio. tidyverse: Easily Install and Load the “Tidyverse.” Published online February 22, 2023. Accessed February 2, 2024. https://cran.r-project.org/web/packages/tidyverse/index.html
+3. Qiu Y. showtext. Published online January 20, 2024. Accessed January 21, 2024. https://github.com/yixuan/showtext
+4. Wilke CO, Wiernik BM. ggtext: Improved Text Rendering Support for “ggplot2.” Published online September 16, 2022. Accessed January 26, 2024. https://cran.r-project.org/web/packages/ggtext/index.html
+
+

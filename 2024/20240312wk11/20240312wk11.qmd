@@ -51,6 +51,7 @@ library(camcorder)
 library(fishualize)
 library(ggmosaic)
 library(colorspace)
+library(ggforce)
 
 ```
 
@@ -183,6 +184,72 @@ strong_text = "#EFEFEF"
 weak_text = darken(strong_text, 0.1)
 
 ```
+
+## ALTERNATE CHART
+
+Ryan Heart (curated mess on [GitHub](https://github.com/curatedmess/TidyTuesday/tree/main/2024/03122024) and [@ryanahart](https://twitter.com/ryanahart/status/1768044688882180572) on X) produced a great viz for this week’s submission. I took inspiration from it because of the work he did with polygons. There are some amazing things you can do with polygons in `{ggplot2}`, but one of the things I struggle with is understanding the dimensions. I am saving this creation incase I want to produce something similar. In particular I am trying to think of a viz containing raindrops or or some other kind of non-standard object. 
+
+```{r, warning=FALSE, message=FALSE}
+
+df2 <- read_csv("data/fiscal_sponsor_directory.csv") %>%
+  janitor::clean_names() %>% 
+  mutate(type = ifelse(grepl("arts and culture", project_types, ignore.case = TRUE), "AC", "REST")) %>% 
+  group_by(type) %>% 
+  summarise(test2 = sum(n_sponsored, na.rm = TRUE)) %>% 
+  mutate(perc = test2/sum(test2)) %>% 
+  filter(type == "AC")
+
+```
+
+### CREATE POLYGON DATA
+
+```{r, poly2, warning=FALSE, message=FALSE}
+# inspiration for polygon circle code taken from here ---------------------
+# https://stackoverflow.com/questions/74297714/ggplot2-function-fo --------
+
+area_percentage_to_remove <- 1 - df2$perc
+
+# calculate the desired area percentage to remove
+radius_to_remove <- sqrt(area_percentage_to_remove)
+
+# create a data frame with the points of the circle
+circle_points <- tibble(deg = seq(0, 360, length.out = 1000),
+                        r = 1,
+                        x = r * cos((deg * pi) / 180), 
+                        y = r * sin((deg * pi) / 180))
+
+# calculate the corresponding y-coordinate for the cut
+y_cut <- radius_to_remove
+
+# filter the points based on the y-coordinates
+cut_points <- circle_points %>%
+  filter(y <= y_cut)
+```
+
+
+
+### ALTERNATIVE PLOT
+
+```{r, message=TRUE, warning=FALSE}
+
+plt2 <- ggplot() +
+  geom_polygon(data = cut_points, aes(x = x, y = y), fill = "#000000") +
+  annotate("text", x = 0, y = 0.6, label = "Arts and Culture", family = "text", size = 9, vjust = "bottom") +
+  geom_text(data = df2, aes(x = 0, y = 0, label = scales::percent(perc, accuracy = 0.01)), family = "text", size = 20, color = "#FFFFFF") +
+  annotate("text", x = 0, y = -0.45, label = "of the reported projects receiving fiscal sponsorship from\n1957 to 2023 are from 501(c)(3) groups focused\non the arts and culture, according to\nfiscalsponsordirectory.org", family = "text", size = 3, color = "#FFFFFF") +
+  scale_y_continuous(limits = c(-1.1, 1.1)) +
+  scale_x_continuous(limits = c(-1.1, 1.1)) +
+  coord_equal() 
+```
+
+### SAVE SECOND PLOT
+
+```{r, save2, warning=FALSE, message=FALSE}
+
+plt2 <- ggsave(paste0("polygon_", format(Sys.time(), "%d%m%Y"), ".png"), dpi = 320, height = 8.5, width = 11, limitsize = F)
+
+```
+
 
 ## REFERENCES
 
