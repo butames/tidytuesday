@@ -108,18 +108,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<p>The goal is to reproduce <strong>plate 47</strong> developed by W.E.B Du Bois for the 1900 Paris Exposition (as shown below).</p>
-<img src="https://raw.githubusercontent.com/butames/tidytuesday/main/otherprojects/2024duboisviz/challenge07/img/original-plate-47.jpg" alt="Illiteracy of the American Negro compared with other nations (plate 47), March 18" title="Illiteracy of the American Negro compared with other nations (plate 47), March 18" height="35%">
+<p>The goal this week is to reproduce <strong>plate 47</strong> developed by W.E.B Du Bois for the 1900 Paris Exposition (as shown below).</p>
+<center>
+<img src="https://raw.githubusercontent.com/butames/tidytuesday/main/otherprojects/2024duboisviz/challenge07/img/original-plate-47.jpg" alt="Illiteracy of the American Negro compared with other nations (plate 47), March 18" title="Illiteracy of the American Negro compared with other nations (plate 47), March 18" height="50%">
 <blockquote class="blockquote">
 <p>
 Illiteracy of the American Negro compared with other nations (plate 47), March 18
 </p>
 <footer>
-<ul>
-<li>#DuBoisChallenge came from Allen Hillery and Sekou Tyler (2024)
-</li></ul></footer>
+#DuBoisChallenge came from Allen Hillery and Sekou Tyler (2024)
+</footer>
 </blockquote>
-
+</center>
 <section id="library" class="level2">
 <h2 class="anchored" data-anchor-id="library">LIBRARY</h2>
 <p>This week, the challenge is fairly straight-forward. We are dealing with a horizontal bar chart (i.e., categories on the y-axis, and integers on the x-axis). So I am mostly relying on <code>{ggplot2}</code> within <code>{tidyverse}</code> suite of packages. I will also use the janitor package. I typically use the <code>clean_names()</code> function, to ensure the variable names are entered consistently. I am also using the <code>{showtext}</code> and the <code>{ggtext}</code> packages to help with using outside fonts.</p>
@@ -158,10 +158,73 @@ Illiteracy of the American Negro compared with other nations (plate 47), March 1
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>captxt <span class="ot">&lt;-</span> <span class="fu">str_glue</span>(<span class="st">"{tt} Visualization: {X} @butames &amp;bull; {mn} @butames(mastodon.cloud) Code: {gh} butames &amp;bull; Tools: #rstats #ggplot2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
+<section id="add-colors" class="level2">
+<h2 class="anchored" data-anchor-id="add-colors">ADD COLORS</h2>
+<p>There are four colors used on this plate, there is the brown of the background, the black of the text, and the green and dark red used in the bars of the chart. Interestingly because these plates were prepared by hand in an era when there was no digital chart creation, it appears to be colored in or painted in. So part of the beauty of some of these data charts is the produced by painting or hand drawing.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Background Color</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>bkgcol <span class="ot">&lt;-</span> <span class="st">"#DCC6B3"</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Text Color</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>ttlcol <span class="ot">&lt;-</span> <span class="st">"#000000"</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>subcol <span class="ot">&lt;-</span> <span class="st">"#000000"</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>capcol <span class="ot">&lt;-</span> <span class="st">"#000000"</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>txtcol <span class="ot">&lt;-</span> <span class="st">"#000000"</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Chart Colors</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>palette <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"#2C8657"</span>, <span class="st">"#B90021"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="define-theme" class="level2">
+<h2 class="anchored" data-anchor-id="define-theme">DEFINE THEME</h2>
+<p>Define the theme. I have found this approach useful in the past, so I continue here.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>, <span class="at">base_family =</span> <span class="st">"text"</span>))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_update</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot.title.position   =</span> <span class="st">"plot"</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot.caption.position =</span> <span class="st">"plot"</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">axis.title.x          =</span> <span class="fu">element_text</span>(<span class="at">margin =</span> <span class="fu">margin</span>(<span class="at">t =</span> <span class="dv">10</span>, <span class="at">r =</span> <span class="dv">0</span>, <span class="at">b =</span> <span class="dv">0</span>, <span class="at">l =</span> <span class="dv">0</span>), <span class="at">size =</span> <span class="fu">rel</span>(<span class="dv">1</span>), <span class="at">color =</span> txtcol, <span class="at">family =</span> <span class="st">"text"</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">axis.title.y          =</span> <span class="fu">element_text</span>(<span class="at">margin =</span> <span class="fu">margin</span>(<span class="at">t =</span> <span class="dv">0</span>, <span class="at">r =</span> <span class="dv">10</span>, <span class="at">b =</span> <span class="dv">0</span>, <span class="at">l =</span> <span class="dv">0</span>), <span class="at">size =</span> <span class="fu">rel</span>(<span class="dv">1</span>), <span class="at">color =</span> txtcol, <span class="at">family =</span> <span class="st">"text"</span>, <span class="at">face =</span> <span class="st">"bold"</span>),</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">axis.text             =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">axis.line.x           =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">panel.grid.minor.y    =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">panel.grid.major.y    =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">panel.grid.minor.x    =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">panel.grid.major.x    =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot.margin           =</span> <span class="fu">margin</span>(<span class="at">t =</span> <span class="dv">10</span>, <span class="at">r =</span> <span class="dv">10</span>, <span class="at">b =</span> <span class="dv">10</span>, <span class="at">l =</span> <span class="dv">10</span>),</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot.background       =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> bkgcol, <span class="at">color =</span> bkgcol),</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">panel.background      =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> bkgcol, <span class="at">color =</span> bkgcol)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data" class="level2">
+<h2 class="anchored" data-anchor-id="data">DATA</h2>
+<p>The team that prepared the data, created a side note going forward.</p>
+<blockquote class="blockquote">
+<p>This chart has no units, so extrapilating the illiteracy rate of Black Americans in the 1890 Census (56.8%, source “Excerpts are taken from Chapter 1 of 120 Years of American Education: A Statistical Portrait (Edited by Tom Snyder, National Center for Education Statistics, 1993).”, https://nces.ed.gov/naal/lit_history.asp).</p>
+<p>56.8% – 8.8cm on the chart yields 6.45454 illitercy points/cm. by measuring the length of each bar (recorded in ill.d), you can compute the illiteracy points: Romaine, 72.9363</p>
+<p>Servie, 72.2908</p>
+<p>Russie, 72.2908</p>
+<p>“Negroes, U.S.A.”,56.8</p>
+<p>Hongrie, 55.509</p>
+<p>Italie, 43.8909</p>
+<p>Autriche, 34.8545</p>
+<p>Ireland, 25.1727</p>
+<p>France, 12.9091</p>
+<p>Suede, 0.645454</p>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df1 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/data.csv"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
 <section id="save-figure" class="level2">
 <h2 class="anchored" data-anchor-id="save-figure">SAVE FIGURE</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ggsave(paste0("challenge07_", format(Sys.time(), "%d%m%Y"), ".png"), dpi = 320, height=11, width = 8.5, limitsize = F)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ggsave(paste0("challenge07_", format(Sys.time(), "%d%m%Y"), ".png"), dpi = 320, height=11, width = 8.5, limitsize = F)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="references" class="level2">

@@ -4,6 +4,7 @@ author: "Seyram A. Butame"
 date: "March 18, 2024"
 format:
   html: 
+   code-overflow: wrap
    theme: cosmo
 highlight: kate
 editor_options:
@@ -12,17 +13,19 @@ editor_options:
 
 The goal this week is to reproduce **plate 47** developed by W.E.B Du Bois  for the 1900 Paris Exposition (as shown below).
 
+<center>
 <img
   src="https://raw.githubusercontent.com/butames/tidytuesday/main/otherprojects/2024duboisviz/challenge07/img/original-plate-47.jpg"
   alt="Illiteracy of the American Negro compared with other nations (plate 47), March 18"
   title="Illiteracy of the American Negro compared with other nations (plate 47), March 18" 
-  height="35%"/>
+  height = "50%"/>
 <blockquote>
   <p>
     Illiteracy of the American Negro compared with other nations (plate 47), March 18
   </p>
-  <footer>- #DuBoisChallenge came from Allen Hillery and Sekou Tyler (2024)</cite></footer>
+  <footer>#DuBoisChallenge came from Allen Hillery and Sekou Tyler (2024)</cite></footer>
 </blockquote>
+</center>
 
 
 ## LIBRARY
@@ -82,6 +85,90 @@ subtxt <- str_glue("Proportion d' illettres parmi le Negres Americans comparee a
 captxt <- str_glue("{tt} Visualization: {X} @butames &bull; {mn} @butames(mastodon.cloud) Code: {gh} butames &bull; Tools: #rstats #ggplot2")
 
 ```
+
+## ADD COLORS
+
+There are four colors used on this plate, there is the brown of the background, the black of the text, and the green and dark red used in the bars of the chart. Interestingly because these plates were prepared by hand in an era when there was no digital chart creation, it appears to be colored in or painted in. So part of the beauty of some of these data charts is the  produced by painting or hand drawing.
+
+```{r, color, warning=FALSE, message=FALSE}
+
+# Background Color
+
+bkgcol <- "#DCC6B3"
+
+# Text Color
+
+ttlcol <- "#000000"
+subcol <- "#000000"
+capcol <- "#000000"
+txtcol <- "#000000"
+
+# Chart Colors
+
+palette <- c("#2C8657", "#B90021")
+
+```
+
+## DEFINE THEME
+
+Define the theme. I have found this approach useful in the past, so I continue here.
+
+```{r, theme, warning=FALSE, message=FALSE}
+
+theme_set(theme_minimal(base_size = 12, base_family = "text"))
+theme_update(
+  plot.title.position   = "plot",
+  plot.caption.position = "plot",
+  axis.title.x          = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0), size = rel(1), color = txtcol, family = "text", face = "bold"),
+  axis.title.y          = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0), size = rel(1), color = txtcol, family = "text", face = "bold"),
+  axis.text             = element_blank(),
+  axis.line.x           = element_blank(),
+  panel.grid.minor.y    = element_blank(),
+  panel.grid.major.y    = element_blank(),
+  panel.grid.minor.x    = element_blank(),
+  panel.grid.major.x    = element_blank(),
+  plot.margin           = margin(t = 10, r = 10, b = 10, l = 10),
+  plot.background       = element_rect(fill = bkgcol, color = bkgcol),
+  panel.background      = element_rect(fill = bkgcol, color = bkgcol)
+)
+
+```
+
+## DATA
+
+The team that prepared the data, created a side note going forward.
+
+> This chart has no units, so extrapilating the illiteracy rate of Black Americans in the 1890 Census (56.8%, source "Excerpts are taken from Chapter 1 of 120 Years of American Education: A Statistical Portrait (Edited by Tom Snyder, National Center for Education Statistics, 1993).", https://nces.ed.gov/naal/lit_history.asp).
+> 
+> 56.8% -- 8.8cm on the chart yields 6.45454 illitercy points/cm. by measuring the length of each bar (recorded in ill.d), you can compute the illiteracy points:
+> Romaine, 72.9363
+>
+> Servie, 72.2908
+>
+> Russie, 72.2908
+>
+> "Negroes, U.S.A.",56.8
+>
+> Hongrie, 55.509
+>
+> Italie, 43.8909
+>
+> Autriche, 34.8545
+>
+> Ireland, 25.1727
+>
+> France, 12.9091
+>
+> Suede, 0.645454
+
+
+```{r, data, message=FALSE, warning=FALSE}
+
+df1 <- read_csv("data/data.csv") %>%
+  clean_names()
+
+```
+
 
 ## SAVE FIGURE
 
