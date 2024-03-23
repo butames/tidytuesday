@@ -33,4 +33,9 @@ This year the theme for the challenge will be organized around the colors of the
 
 ## Challenge 06 - Amalgamation of the White and Black elements of the population in the United States (plate 54), March 11
 
+## Challenge 07 - Illiteracy of the American Negro compared with other nations (plate 47), March 18
+
+![Challenge 07](https://raw.githubusercontent.com/butames/tidytuesday/main/otherprojects/2024duboisviz/challenge07/challenge07_22032024.png)
+
+
 Source: https://github.com/ajstarks/dubois-data-portraits/tree/master/challenge/2024
