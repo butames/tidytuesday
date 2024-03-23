@@ -67,7 +67,7 @@ I continue to use [**Font Aweseome**](https://fontawesome.com/icons) to import i
 font_add("fa6-brands", "Users/seyramb/Library/Fonts/Font Awesome 6 Brands-Regular-400.otf") 
 font_add_google("Cutive Mono", "title")
 font_add_google("Cutive Mono", "subtitle")
-font_add_google("Cutive Mono", "caption")
+font_add_google("Roboto Condensed", "caption")
 font_add_google("Cutive Mono", "text")
 
 ```
@@ -81,7 +81,7 @@ gh <- str_glue("<span style='font-family:fa6-brands'>&#xf09b;</span>")
 mn <- str_glue("<span style='font-family:fa6-brands'>&#xf4f6;</span>")
 
 ttltxt <- str_glue("Illiteracy of the American Negro compared with other nations.")
-subtxt <- str_glue("Proportion d' illettres parmi le Negres Americans comparee a celle des autres nations<br>Done by Atlanta University.")
+subtxt <- str_glue("Proportion d' illettres parmi le Negres Americans comparee a celle des autres nations<br><br>Done by Atlanta University.")
 captxt <- str_glue("{tt} Visualization: {X} @butames &bull; {mn} @butames(mastodon.cloud) Code: {gh} butames &bull; Tools: #rstats #ggplot2")
 
 ```
@@ -119,9 +119,10 @@ theme_set(theme_minimal(base_size = 12, base_family = "text"))
 theme_update(
   plot.title.position   = "plot",
   plot.caption.position = "plot",
-  axis.title.x          = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0), size = rel(1), color = txtcol, family = "text", face = "bold"),
-  axis.title.y          = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0), size = rel(1), color = txtcol, family = "text", face = "bold"),
-  axis.text             = element_blank(),
+  axis.title.x          = element_blank(),
+  axis.title.y          = element_blank(),
+  axis.text.x           = element_blank(),
+  axis.text.y           = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0), size = rel(1), color = txtcol, family = "text", face = "bold", hjust = 0),
   axis.line.x           = element_blank(),
   panel.grid.minor.y    = element_blank(),
   panel.grid.major.y    = element_blank(),
@@ -161,11 +162,61 @@ The team that prepared the data, created a side note going forward.
 >
 > Suede, 0.645454
 
+The data manipulation here was rather straightfoward. I also added colors by defining the colors I wanted and then creating a column in the dataframe for the color HEX codes. Then I used that column as the *fill* for the plot.
 
 ```{r, data, message=FALSE, warning=FALSE}
 
 df1 <- read_csv("data/data.csv") %>%
-  clean_names()
+  clean_names() %>%
+  arrange(desc(illiteracy)) %>%
+  mutate(color = case_when(nation == "Negroes, U.S.A." ~ "#B90021", TRUE ~ "#2C8657"))
+
+```
+
+## CREATE PLOT
+
+```{r, plot, warning=FALSE, message=FALSE}
+
+plt1 <- df1 %>%
+  ggplot(mapping = aes(x = reorder(nation, illiteracy), y = illiteracy)) +
+  geom_bar(stat = "identity", fill = df1$color, width = 0.6) +
+  coord_flip() +
+    labs(
+    x = NULL,
+    y = NULL,
+    title = ttltxt,
+    subtitle = subtxt,
+    caption = captxt
+  ) +
+  theme(
+    legend.position  = "none",
+    plot.title       = element_markdown(
+      size           = rel(1.0), 
+      family         = "title",
+      face           = "bold",
+      color          = ttlcol,
+      hjust          = 0.5,
+      halign         = 0.5,
+      margin         = margin(t = 5, b = 5)),
+    plot.subtitle    = element_markdown(
+      size           = rel(.75), 
+      family         = "subtitle",
+      color          = subcol,
+      lineheight     = 0.65,
+      hjust          = 0.5,
+      halign         = 0.5,
+      margin         = margin(t = 5, b = 5)),
+    plot.caption     = element_markdown(
+      size           = rel(.8), 
+      family         = "caption",
+      color          = capcol,
+      lineheight     = 0.65,
+      hjust          = 0.5,
+      halign         = 0.5,
+      margin         = margin(t = 5, b = 5))
+    )
+  
+plt1
 
 ```
 
@@ -174,7 +225,7 @@ df1 <- read_csv("data/data.csv") %>%
 
 ```{r, save, warning=FALSE, message=FALSE}
 
-# ggsave(paste0("challenge07_", format(Sys.time(), "%d%m%Y"), ".png"), dpi = 320, height=11, width = 8.5, limitsize = F)
+ggsave(paste0("challenge07_", format(Sys.time(), "%d%m%Y"), ".png"), dpi = 320, height=11, width = 8.5, limitsize = F)
 
 
 ```
