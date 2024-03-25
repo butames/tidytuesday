@@ -1,0 +1,52 @@
+---
+title: "TidyTuesday Week 12: X-Men Mutant Moneyball"
+author: "Seyram A. Butame"
+date: "March 19, 2024"
+format:
+  html: 
+   code-overflow: wrap
+   theme: cosmo
+highlight: kate
+editor_options:
+  chunk_output_type: console
+---
+
+
+## CHART TYPE
+
+## LIBRARY
+
+```{r,library, warning=FALSE, message=FALSE}
+library(tidytuesdayR)
+library(tidyverse)
+library(showtext)
+library(ggtext)
+library(camcorder)
+library(glue)
+library(skimr)
+library(janitor)
+
+```
+
+## DATA
+
+```{r, data, warning=FALSE, message=FALSE}
+
+tuesdata <- tt_load(2024, week = 12)
+
+mutant_moneyball <- tuesdata$mutant_moneyball %>%
+  write_csv("data/mutant_moneyball.csv")
+
+df1 <- read_csv("data/mutant_moneyball.csv") %>%
+  clean_names()
+
+
+```
+
+
+
+## SAVE PLOT
+
+
+
+## REFERENCE
