@@ -46,7 +46,7 @@ Initially, I considered using the magnifying effect, because that is what it loo
 
 So, what I will do is create two different plots. Then place those plots on a canvas broken up into four quadrants. The bottom left will contain data from 1860 (i.e., the end of the US Civil War) and the top right will contain the chart with daat from 1890 (i.e., a generation removed from the end of the US reconstruction era). 
 
-There are a handful of packages that can achieve this effect, there is the `grid.arrange()` in `{gridExtra}`, there is also the `{multiplot}` package. However, ther one I have used with some frequency is the `{patchwork}` package. The rest of the chart is fairl straight-forward, as it appears to be two stacked bar charts, easily acheived with `{ggplot}` and the `geom_bar()` function. The color choices for the Du Bois team are interesting, and I think they are supposed to represent the tri colors of the Pan-African flag (i.e., the red, black and green)
+There are a handful of packages that can achieve this effect, there is the `grid.arrange()` in `{gridExtra}`, there is also the `{multiplot}` package, as is the`{patchwork}` package. For this project I recently came across `{ggpubr}`, and I am giving that a go. The rest of the chart is fairl straight-forward, as it appears to be two stacked bar charts, easily acheived with `{ggplot}` and the `geom_bar()` function. The color choices for the Du Bois team are interesting, and I think they are supposed to represent the tri colors of the Pan-African flag (i.e., the red, black and green)
 
 ## LIBRARY 
 
@@ -57,8 +57,37 @@ library(patchwork)
 library(showtext)
 library(ggtext)
 library(janitor)
+library(ggpubr)
 
 ```
+
+## SET TEXT RESOLUTION
+
+
+```{r, text, message=TRUE, warning=FALSE}
+
+showtext_auto()
+
+showtext_opts(dpi = 320, regular.wt = 300, bold.wt = 800)
+
+```
+
+## LOAD FONTS
+
+For the Du Bois challenges I have been using the **Exo 2** font available through [Google Fonts](https://fonts.google.com/specimen/Exo+2?query=exo+2). This font was designed by [Natanael Gama](https://fonts.google.com/?query=Natanael+Gama). It is a font that somewhat approximates the font used by Du Bois for all chart plates. I think I will continue with this particular font.
+
+I continue to use [**Font Aweseome**](https://fontawesome.com/icons) to import icons into my plot.
+
+```{r fonts, message=FALSE, warning=FALSE}
+
+font_add("fa6-brands", "Users/seyramb/Library/Fonts/Font Awesome 6 Brands-Regular-400.otf") 
+font_add_google("Exo 2", "title")
+font_add_google("Exo 2", "subtitle")
+font_add_google("Roboto Condensed", "caption")
+font_add_google("Exo 2", "text")
+
+```
+
 
 ## DATA AND DATA WRANGLING
 
@@ -117,7 +146,19 @@ palette2 <- c("#B90021", "#2C8657")
 
 ```
 
+## TITLES & CAPTIONS
 
+```{r, title, warning=FALSE, message=FALSE}
+tt <- str_glue("Du Bois Challenge: { 2024 } Week { 08 } &vert; Source: Allen Hillery and Sekou Tyler<br>")
+X  <- str_glue("<span style='font-family:fa6-brands'>&#xe61b;</span>")   
+gh <- str_glue("<span style='font-family:fa6-brands'>&#xf09b;</span>")
+mn <- str_glue("<span style='font-family:fa6-brands'>&#xf4f6;</span>")
+
+ttltxt <- str_glue("Illiteracy of the American Negro compared with other nations.")
+subtxt <- str_glue("Proportion d' illettres parmi le Negres Americans comparee a celle des autres nations<br><br>Done by Atlanta University.")
+captxt <- str_glue("{tt} Visualization: {X} @butames &bull; {mn} @butames(mastodon.cloud) Code: {gh} butames &bull; Tools: #rstats #ggplot2")
+
+```
 
 ## DEFINE THEME
 
@@ -157,7 +198,11 @@ plt1 <- ggplot() +
   ylim(0, 100) +
   xlim(0, 100) +
   annotate("text", x = 0.95, y = 95, label = "IN 1890 NEARLY ONE FIFTH OF THEM OWNED THEIR OWN HOMES AND FARMS. \nTHIS ADVANCE WAS ACCOMPLISHED ENTIRELY WITHOUT STATE AID, AND IN \nTHE FACE OF PROSPECTIVE LAWS.", size = 3, hjust = 0, color = "#000000") +
-  annotate("text", x = 0.95, y = 75, label = "EN 1890 ENVIRON UN CINQUIÈME ÉTAIENT PROPRIÉTAIRES DE LEURS HAB-\nITATIONS ET DE LEURS FERMES CE PROGRÈS S’EST ACCOMPLI SANS \nSECOURS AUCUN DE L’ÉTAT ET EN PRÉSENCE DE LOIS DÉFAVORABLES.", size = 3, hjust = 0, color = "#000000") 
+  annotate("text", x = 0.95, y = 75, label = "EN 1890 ENVIRON UN CINQUIÈME ÉTAIENT PROPRIÉTAIRES DE LEURS HAB-\nITATIONS ET DE LEURS FERMES CE PROGRÈS S’EST ACCOMPLI SANS \nSECOURS AUCUN DE L’ÉTAT ET EN PRÉSENCE DE LOIS DÉFAVORABLES.", size = 3, hjust = 0, color = "#000000") +
+  labs(
+    x = NULL,
+    y = NULL
+  ) 
 
 
 plt1
@@ -178,7 +223,11 @@ plt2 <- df1 %>%
   annotate("text", x = 0.95, y = 105, label = "1890", size = 5, hjust = 0, color = "#000000") +
   annotate("text", x = 0.95, y = 90, label = "19%", size = 5, hjust = 0, colour = "#000000") +
   annotate("text", x = 0.95, y = 50, label = "81%", size = 5, hjust = 0, colour = "#000000") +
-  annotate("text", x = 0.95, y = 42, label = "TENANTS \nMETAYERS", size = 2, hjust = 0, color = "#000000") 
+  annotate("text", x = 0.95, y = 42, label = "TENANTS \nMETAYERS", size = 2, hjust = 0, color = "#000000") +
+  labs(
+    x = NULL,
+    y = NULL
+  ) 
 
   
 plt2
@@ -191,7 +240,11 @@ Contains plot for data from 1860 to be assigned to Quadrant 03
 
 ```{r, plt3, warning=FALSE, message=FALSE}
 
-plt3 <- ggplot() 
+plt3 <- ggplot() +
+  labs(
+    x = NULL,
+    y = NULL,
+  ) 
 
 plt3
 
@@ -214,7 +267,11 @@ plt4 <- df1 %>%
   annotate("text", x = 0.82, y = 95, label = "11%", size = 5, hjust = 0, color = "#000000") +
   annotate("text", x = 0.95, y = 95, label = "FREE LABORERS \nOUVRIERS LIBRES", size = 2.5, hjust = 0, color = "#000000") +
   annotate("text", x = 0.95, y = 50, label = "89%", size = 5, hjust = 0, color = "#B90021") +
-  annotate("text", x = 0.95, y = 45, label = "SLAVES \nESCLAVES", size = 2, hjust = 0, color = "#B90021") 
+  annotate("text", x = 0.95, y = 45, label = "SLAVES \nESCLAVES", size = 2, hjust = 0, color = "#B90021") +
+  labs(
+    x = NULL,
+    y = NULL,
+  ) 
 
 
   
@@ -226,9 +283,15 @@ plt4
 
 ## PLOTS TOGETHER
 
-```{r, canvas, warning=FALSE, message=FALSE}
+```{r, grid, warning=FALSE, message=FALSE}
 
-plt1 | plt4 / plt2 | plt3
+figure <- ggarrange(plt1, plt2, plt4, plt3, ncol = 2, nrow = 2) 
+
+annotate_figure(figure,
+               top = text_grob("Visualizing Tooth Growth", color = "red", face = "bold", size = 14),
+               left = text_grob("Figure arranged using ggpubr", color = "green", rot = 90),
+               right = text_grob(bquote("Superscript: ("*kg~NH[3]~ha^-1~yr^-1*")"), rot = 90),
+               fig.lab = "Figure 1", fig.lab.face = "bold")
 
 ```
 
