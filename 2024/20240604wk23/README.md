@@ -14,7 +14,7 @@
 </div>
 
 
-This week, the data comes from website [cheese.com](https://www.cheese.com/)
+This week, the data comes from the website [cheese.com](https://www.cheese.com/). A website dedicated to all things cheese! In addition to education material on different cheeses and guidance on cheese pairings, the website also hosts a cheese database, with a collection of 1971 chesse varieties from 74 countries. Somof the data has been cleaned and prepared for analysis this week, leaving us with-- 248 cheeses have listed fat content. Organizers, want us to explore if there is a relationship between fat content and cheese type? Or perhaps explore texture, flavor, or aroma?
 
 A code snippet for creating a gif using the `gg_playback()` function from the `{camcorder}` package.
 
@@ -49,5 +49,5 @@ gg_playback(
 7. Hughes E, Scherer C, Karamanis G. camcorder: Record Your Plot History. Published online October 3, 2022. Accessed February 7, 2024. https://cran.r-project.org/web/packages/camcorder/index.html
 
 ### Trash Wheel Collection Data - TidyTuesda Week 10
-![♻️ Trash Wheel Collection](https://github.com/butames/tidytuesday/blob/main/2024/20240123wk10/barchart06032024.png)
+![🧀 Cheese](https://github.com/butames/tidytuesday/blob/main/2024/20240604wk23/barchart06032024.png)
 

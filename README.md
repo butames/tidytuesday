@@ -63,3 +63,8 @@ The [TidyTuesday Challenge](https://github.com/rfordatascience/tidytuesday) prod
 ### 2024 - Week 10 [🗑️ Trash Wheel](https://github.com/butames/tidytuesday/tree/main/2024/20240220wk10)
 
 ![🗑️ Trash Wheel Collection](https://github.com/butames/tidytuesday/blob/main/2024/20240123wk10/barchart06032024.png)
+
+### 2024 - Week 23 [🧀 Cheese](https://github.com/butames/tidytuesday/tree/main/2024/20240604wk23)
+
+![🧀 Cheese](https://github.com/butames/tidytuesday/tree/main/2024/20240604wk23/barchart06032024.png)
+
