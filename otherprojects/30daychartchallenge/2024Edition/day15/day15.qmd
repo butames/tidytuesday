@@ -1,0 +1,161 @@
+---
+title: "30DayChartChallenge: Historical"
+author: "Seyram A. Butame"
+date: "April 15, 2024"
+format:
+  html: 
+   code-overflow: wrap
+   theme: cosmo
+highlight: kate
+editor_options:
+  chunk_output_type: console
+---
+
+## INTRODUCTION
+
+The *#30DayChartChallenge* is a community driven event, with the goal to create a data visualization on a certain topic each day of April. It’s tool and social media platform agnostic. The theme for today's chart (i.e., **Day 15**) is historical.
+
+You can pull data from the [Baseball Almanac](https://www.baseball-almanac.com/fammenu.shtml). Apparently, there are several dynastic familes in America's Baseball history. Ryan Hart on Twitter(@ryanahart) created a simple straight rather straightforward timeline chart that showed the members of one of these baseball dynasties (i.e., the Boone Family). I wanted to recreate this, to have a similar code for this type of chart around for whenn may need it at another time. I want to say thank you to Ryan Hart for willing share his code and his creativity.
+
+## LIBRARY
+
+Because it is rather simple project I am going to use the `{tidyverse}` suite of packages, which includes `{ggplot2}`. There are one or two other packages that are typically use when creating viz documents including: `{janitor}` (I really only use the col_names() function, but it is a general tool for cleaning data), `{showtext}` (aids with the choosing of text display quality as well as with employing Google Fonts), `{ggtext}` (helps with using text in charts, such as employing markdown in the lables), `{glue}` (makes it easier to concatenate strings), and `{camcorder}` (Helps create a gif of the process of putting together the chart).
+
+```{r, library, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(camcorder)
+library(ggtext)
+library(glue)
+library(janitor)
+library(showtext)
+
+```
+
+## SET TEXT RESOLUTION
+
+
+```{r, text, message=TRUE, warning=FALSE}
+
+showtext_auto()
+
+showtext_opts(dpi = 320, regular.wt = 300, bold.wt = 800)
+
+```
+
+## SET FONTS
+
+I am still using the  *Roboto Condensed* font, avaailable from Google Fonts. I like it's clean and non-blocky look. I am also using the [Font Awesome](https://fontawesome.com/icons). *Font Awesome* allows me to employ icons in the labels I use.
+
+```{r fonts, message=FALSE, warning=FALSE}
+
+font_add("fa6-brands", "Users/seyramb/Library/Fonts/Font Awesome 6 Brands-Regular-400.otf") 
+font_add_google("Roboto Condensed", "title")
+font_add_google("Roboto Condensed", "subtitle")
+font_add_google("Roboto Condensed", "caption")
+font_add_google("Roboto Condensed", "text")
+
+font_add_google(name = "Graduate", family = "Graduate")
+font_t <- "Graduate"
+
+```
+
+
+## TITLES & CAPTIONS
+
+```{r, title, warning=FALSE, message=FALSE}
+tt <- str_glue("TidyTuesday: { 2024 } Week { 10 } &vert; Source: Fiscal Sponsors Directory<br>")
+X  <- str_glue("<span style='font-family:fa6-brands'>&#xe61b;</span>")   
+gh <- str_glue("<span style='font-family:fa6-brands'>&#xf09b;</span>")
+mn <- str_glue("<span style='font-family:fa6-brands'>&#xf4f6;</span>")
+
+ttltxt <- str_glue("The Boone Family")
+subtxt <- str_glue("Three Generations Playing Major League Baseball.")
+captxt <- str_glue("{tt} Contact: {X} @butames &vert; {mn} @butames(mastodon.cloud) Code: {gh} butames &vert; Inspiration: Ryan Hart &vert; Tools: #rstats #ggplot2 #dataviz")
+
+```
+
+## SELECT COLOR 
+```{r, color, warning=FALSE, message=FALSE}
+
+# Background Color
+bkgcol <- "#FEFAF1"
+
+# Text Color
+
+ttlcol <- "#000000"
+subcol <- "#000000"
+capcol <- "#000000"
+txtcol <- "#000000"
+
+```
+
+## IMPORT DATA
+
+The data was rather simple. I created a simple table (saved as a `.csv` document). The table contained three columns (i.e., three variables) and a handful of rows.
+
+```{r, data, warning=FALSE, message=FALSE}
+
+data <- read_csv("data/data.csv") %>%
+  clean_names()
+
+```
+
+## DATA WRANGLING
+
+We have to do some minor data wrangling. Just a note, when I imported the data, the date columns were all converted to stringFirst we format the start and end variables so that they represent a date in a year format, as four digits. Then we create the label 
+
+```{r, wrangle, message=FALSE, warning=FALSE}
+
+df1 <- data %>% 
+  mutate(start=as.Date(start, format = "%m/%d/%Y")) %>% 
+  mutate(end=as.Date(end, format = "%m/%d/%Y")) %>% 
+  mutate(start = year(start), end = year(end)) %>% 
+  mutate(label = start + ((end-start)/2))
+
+```
+
+```{r}
+
+df1$name <- factor(df1$name, levels = c("Ray", "Bob", "Bret", "Aaron"))
+
+combined_dates <- c(df1$start, df1$end)
+
+df_label <- data.frame(year = combined_dates)
+
+```
+
+```{r}
+plt1 <- df1 %>% 
+  ggplot() +
+  geom_text(data = df_label, aes(x = year, y = 5.15, label = year), family = font_t, color = "#000000", size = 3, fontface = "bold", angle = 45, hjust = 0) +
+  geom_point(data = df_label, aes(x = year, y = 5), color = "#000000", size = 2) +
+  geom_point(aes(x = start, y = as.numeric(name)), color = "#000000", size = 2) +
+  geom_point(aes(x = end, y = as.numeric(name)), color = "#000000", size = 2) +
+  geom_segment(aes(x = start, xend = start, y = 5, yend = as.numeric(name)), color = "#000000", linetype = "dotted", linewidth = 0.5) +
+  geom_segment(aes(x = end, xend = end, y = 5, yend = as.numeric(name)), color = "#000000", linetype = "dotted", linewidth = 0.5) +
+  geom_hline(yintercept = 5, linewidth = 1.2, color = "#000000") +
+  geom_segment(aes(x = start, xend = end, y = as.numeric(name), yend = as.numeric(name)), linewidth = 20) +
+  geom_text(aes(x = label, y = as.numeric(name), label = as.numeric(name)), family = font_t, size = 5, color = "#FFFFFF", hjust = 0.5, fontface = "bold", vjust = 0) +
+  # geom_text(aes(x = label, y = Name, label = paste0(years, " seasons")), family = font_t, size = 3, color = "#FFFFFF", hjust = 0.5, fontface = "bold", vjust = 2) 
+  annotate("text", x = 1948, y = "Bob", label = "The\nBoone\nFamily", family = font_t, size = 12, color = "#000000", fontface = "bold", hjust = 0, vjust = 1.75, lineheight = 0.7) +
+  annotate("text", x = 1948, y = "Aaron", label = "Three generations playing major league baseball", family = font_t, size = 4, color = "#000000", hjust = 0, vjust = 7)
+  # annotate("text", x = 1954, y = "Ray", label = "Grandfather", family = font_t, size = 4, color = "#999999", hjust = 0.5, vjust = 4) +
+  # annotate("text", x = 1981, y = "Bob", label = "Father", family = font_t, size = 4, color = "#999999", hjust = 0.5, vjust = 4) +
+  # annotate("text", x = 2000.5, y = "Aaron", label = "Brothers", family = font_t, size = 4, color = "#999999", hjust = 0.5, vjust = 4) +
+  # scale_y_discrete(limits = rev, expand = expansion(add = 2)) +
+  # coord_cartesian(clip = "off") 
+
+plt1
+```
+
+
+## REFERENCE
+
+1. Firke, Sam, et al. Janitor: Simple Tools for Examining and Cleaning Dirty Data. 2.2.0, 2 Feb. 2023. R-Packages, https://cran.r-project.org/web/packages/janitor/index.html.
+2. Hester, Jim, et al. Glue: Interpreted String Literals. 1.7.0, 9 Jan. 2024. R-Packages, https://cran.r-project.org/web/packages/glue/index.html.
+3. Hughes, Ellis, et al. Camcorder: Record Your Plot History. 0.1.0, 3 Oct. 2022. R-Packages, https://cran.r-project.org/web/packages/camcorder/index.html.
+4. Qiu, Yixuan. Showtext. 2013. 20 Jan. 2024. GitHub, https://github.com/yixuan/showtext.
+5. Wickham, Hadley, and RStudio. Tidyverse: Easily Install and Load the “Tidyverse.” 2.0.0, 22 Feb. 2023. R-Packages, https://cran.r-project.org/web/packages/tidyverse/index.html.
+6. Wilke, Claus O., and Brenton M. Wiernik. Ggtext: Improved Text Rendering Support for “Ggplot2.” 0.1.2, 16 Sept. 2022. R-Packages, https://cran.r-project.org/web/packages/ggtext/index.html.
+
+

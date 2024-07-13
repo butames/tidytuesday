@@ -20,6 +20,7 @@ The [TidyTuesday Challenge](https://github.com/rfordatascience/tidytuesday) prod
 </div>
 
 
+
 <details>
   <summary>TidyTuesday Attempts/ Contributions (click to expand)</summary>
  
@@ -29,7 +30,13 @@ The [TidyTuesday Challenge](https://github.com/rfordatascience/tidytuesday) prod
 
   - Week 04 [🎓 Educational attainment of young people in English towns](https://github.com/butames/tidytuesday/tree/main/2024/20240123wk04)
 
-  - Week 08 [💰 R Consortium ISC Grants](https://github.com/butames/tidytuesday/tree/main/2024/20240220wk08)
+  - Week 08 [📂 R Consortium ISC Grants](https://github.com/butames/tidytuesday/tree/main/2024/20240220wk08)
+
+  - Week 10 [🗑️ Trash Wheel](https://github.com/butames/tidytuesday/tree/main/2024/20240220wk10)
+
+  - Week 23 [🧀 Cheese](https://github.com/butames/tidytuesday/tree/main/2024/20240604wk23)
+
+
   
 <!-- tocstop -->
 
@@ -49,10 +56,10 @@ The [TidyTuesday Challenge](https://github.com/rfordatascience/tidytuesday) prod
 
 ### 2024 - Week 07
 
-### 2024 - Week 08 [💰 R Consortium ISC Grants](https://github.com/butames/tidytuesday/tree/main/2024/20240220wk08)
+### 2024 - Week 08 [📂 R Consortium ISC Grants](https://github.com/butames/tidytuesday/tree/main/2024/20240220wk08)
 
-![💰 R Consortium ISC Grants](https://github.com/butames/tidytuesday/blob/main/2024/20240123wk08/barchart06022024.png)
+![📂 R Consortium ISC Grants](https://github.com/butames/tidytuesday/blob/main/2024/20240123wk08/barchart06022024.png)
 
-### 2024 - Week 10 [💰 R Consortium ISC Grants](https://github.com/butames/tidytuesday/tree/main/2024/20240220wk10)
+### 2024 - Week 10 [🗑️ Trash Wheel](https://github.com/butames/tidytuesday/tree/main/2024/20240220wk10)
 
-![♻️ Trash Wheel Collection](https://github.com/butames/tidytuesday/blob/main/2024/20240123wk10/barchart06032024.png)
+![🗑️ Trash Wheel Collection](https://github.com/butames/tidytuesday/blob/main/2024/20240123wk10/barchart06032024.png)

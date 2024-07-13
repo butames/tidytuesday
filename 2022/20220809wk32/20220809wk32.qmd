@@ -1,0 +1,61 @@
+---
+title: "TidyTuesday Week 32: Ferris Wheel"
+author: "Seyram A. Butame"
+date: "August 09, 2022"
+format:
+  html: 
+   theme: cosmo
+highlight: kate
+editor_options:
+  chunk_output_type: console
+---
+
+
+## CHART TYPE
+I am always on the look out for ways to create maps in R. Maps are a great way to display data, so once you have the relevant data, you can plot the data creating a piece of information that is easily taken-in by the reader.
+
+## LIBRARy
+
+```{r, library, message=FALSE, warning=FALSE}
+library(tidytuesdayR)
+library(tidyverse)
+library(ggtext)
+library(showtext)
+library(showtextdb) # Downloads the fonts to use with the `{showtext}` package
+library(glue)
+library(maps)
+library(ggforce)
+library(janitor)
+library(data.table)
+```
+
+
+## DATA
+
+
+```{r, data, message=FALSE, warning=FALSE}
+
+wheels <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-08-09/wheels.csv") %>%
+  write_csv("data/wheels.csv")
+
+```
+
+## DATA WRANGLING
+
+```{r, wrangle, message=FALSE, message=FALSE}
+
+df1 <- wheels %>%
+  clean_names()
+
+df1 <- df1[, 2:ncol(df1)] ## Excluding the first column
+df1 <- df1[which(is.na(df1$closed)), ]
+df1 <- df1[which(!is.na(df1$opened)), ]
+
+usa <- df1[which(df1$country == "USA"), ]
+
+usa.cities <- world.cities
+usa.cities <- setDT(usa.cities)
+usa.cities <- usa.cities[which(country.etc == "USA"), ]
+
+```
+

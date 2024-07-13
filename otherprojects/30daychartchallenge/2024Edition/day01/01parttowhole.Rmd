@@ -1,0 +1,179 @@
+---
+title: "30 Day Chart Challenge - Part to Whole"
+author: "Seyram A. Butame"
+date: "April 01, 2024"
+format:
+  html: 
+   theme: cosmo
+highlight: kate
+editor_options:
+  chunk_output_type: console
+---
+
+For taday I want to keep it very simple. And since the themre is part of a whol, I am immediately thinking **Pie Chart**. But there are some fancier versions of pie charts called **Donut Charts** so I am creating the below. I got the data form [*Cedric Scherer*](https://www.cedricscherer.com/2024/04/01/contributions-30daychartchallenge-2024/). Their work is in datawrapper, while I am attempting to do it using `{ggplot2}` in R.
+
+<iframe title="Ah, geez!!!" aria-label="Datawrapper visualization" src="https://datawrapper.dwcdn.net/n0YjQ/" scrolling="no" frameborder="0" height="454" style="width: 0px; min-width: 75%; border: none; height: 455px;"></iframe>
+
+
+
+## LIBRARY
+
+```{r, library, warning=FALSE, message=FALSE}
+
+library(tidyverse)
+library(janitor)
+library(ggtext)
+library(showtext)
+library(skimr)
+
+```
+
+## DATA
+
+```{r, data, warning=FALSE, message=FALSE}
+
+df1 <- read_csv("data/data.csv") %>%
+  clean_names()
+
+```
+
+## EXAMINE DATA
+
+I need to use this `{skimr}` package more frequently. Its not really necessary with such a simple dataset here. However, the below is how you would implement the `skim()` function form the package.
+
+```{r exam, message=FALSE, warning=FALSE}
+
+examdt <- skim(df1)
+
+examdt
+
+```
+
+## TEXT RESOLUTIN
+
+
+```{r, text, warning=FALSE, message=FALSE}
+
+
+showtext_auto()
+
+showtext_opts(dpi = 320, regular.wt = 300, bold.wt = 800)
+
+```
+
+## FONTS
+
+```{r, fonts, message=FALSE, warning=FALSE}
+
+font_add("fa6-brands", "Users/seyramb/Library/Fonts/Font Awesome 6 Brands-Regular-400.otf") 
+font_add_google("Roboto Condensed", "title")
+font_add_google("Roboto Condensed", "subtitle")
+font_add_google("Roboto Condensed", "caption")
+font_add_google("Roboto Condensed", "text")
+
+```
+
+
+## COLOR SCHEME
+
+I used a different color scheme for the donut chart. 
+
+```{r, color, warning=FALSE, message=FALSE}
+
+# Background Color
+bkgcol <- "#F4E3D3FF"
+
+# Text Color
+
+ttlcol <- "#000000"
+subcol <- "#000000"
+capcol <- "#000000"
+txtcol <- "#000000"
+
+palette <- c("#345C75FF", "#E48C2AFF")
+
+```
+
+## TITLES AND CAPTIONS
+
+```{r, tilt}
+tt <- str_glue("30 Day Chart Challenge: { 2024 } Day { 01 } &vert; Source: Wikipedia (List of The Simpsons guest stars) <br>")
+X  <- str_glue("<span style='font-family:fa6-brands'>&#xe61b;</span>")   
+gh <- str_glue("<span style='font-family:fa6-brands'>&#xf09b;</span>")
+mn <- str_glue("<span style='font-family:fa6-brands'>&#xf4f6;</span>")
+
+ttltxt <- str_glue("Share of guest stars appearing as themselves on **The Simpsons**(season 1-30).")
+subtxt <- str_glue("Image is inspired by  Cédric Scherer <br> Data sourced from Data Wrapper.")
+captxt <- str_glue("{tt} Visualization: {X} @butames &bull; {mn} @butames(mastodon.cloud) Code: {gh} butames &bull; Tools: #rstats #ggplot2")
+
+```
+
+## THEME
+
+```{r, theme, message=FALSE, warning=FALSE}
+
+theme_set(theme_minimal(base_size = 12, base_family = "text"))
+theme_update(
+  plot.title.position = "plot",
+  plot.caption.position = "plot",
+  axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0), size = rel(1), color = txtcol, family = "text", face = "bold"),
+  axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0), size = rel(1), color = txtcol, family = "text", face = "bold"),
+  axis.text = element_text(size = rel(1), color = txtcol, family = "text"),
+  axis.line.x = element_blank(),
+  panel.grid.minor.y = element_blank(),
+  panel.grid.major.y = element_blank(),
+  panel.grid.minor.x = element_blank(),
+  panel.grid.major.x = element_blank(),
+  plot.margin = margin(t = 10, r = 10, b = 10, l = 10),
+  plot.background = element_rect(fill = bkgcol, color = bkgcol),
+  panel.background = element_rect(fill = bkgcol, color = bkgcol)
+)
+
+```
+
+## DATA WRANGLE
+
+Just a little bit of data wrangling to turn the values into percent.
+
+```{r, wrangle, message=FALSE, warning=FALSE}
+
+df1 <- df1 %>%
+  mutate(percent = n/sum(n))
+
+```
+
+
+## CREATE PLOT
+
+```{r, plot, warning=FALSE, message=FALSE}
+hsize <- 1.5
+plt1 <- df1 %>%
+  ggplot(aes(x = hsize, y = percent, fill = role)) +
+  geom_col() +
+  coord_polar(theta = "y") +
+  xlim(c(0.2, hsize + 0.5)) +
+  scale_fill_manual(values = palette) +
+  theme_minimal() +
+  labs(fill = "Role")
+
+plt1
+
+```
+
+## ADD LABELS
+
+Creating a donut chart applys the `coord_polar()` function. This changes the measurment of the polt making it difficult to annotate the figure. Typically with {ggplot2} annotation is straightofrard, because you can plot the location of the annotation using the `x` and the `y` coordinate system. But now you have introduced a *polar coordinate system.
+
+To add annotations,you should overlay your plots and not use the layer facility, if you don't want to exactly calculate the distance in *radians* of each `x` for each `y`. You can achieve this using the `{cowplot}` package
+
+```{r, annot, message=FALSE, warning=FALSE}
+
+```
+
+
+
+## REFERENCE
+
+1. Wickham H, RStudio. tidyverse: Easily Install and Load the “Tidyverse.” Published online February 22,  2023. Accessed February 2, 2024. https://cran.r-project.org/web/packages/tidyverse/index.html
+
+
